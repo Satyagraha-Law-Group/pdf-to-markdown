@@ -8,8 +8,9 @@ from pathlib import Path
 from slip_pdf_md.citations import repair_citations
 from slip_pdf_md.cleaning import collapse_leaders, demote_running_headers
 from slip_pdf_md.engines import get_engine
-from slip_pdf_md.naming import iso_calcutta
+from slip_pdf_md.naming import iso_calcutta, now_calcutta
 from slip_pdf_md.paths import DUPLICATES, READY, SlipPaths
+from slip_pdf_md.runlog import append_record, build_record
 from slip_pdf_md.registry import (
     STATUS_DONE,
     STATUS_NEEDS_REVIEW,
@@ -132,7 +133,44 @@ def _safe_copy(src: Path, dest_dir: Path) -> Path:
     return dest
 
 
+
 def convert_pdf(
+    pdf_path: Path,
+    paths: SlipPaths,
+    registry: Registry,
+    *,
+    engine_name: str = "pymupdf",
+    repair_citations_flag: bool = False,
+    move_raw: bool = True,
+    batch_id: str | None = None,
+) -> dict:
+    pdf_path = Path(pdf_path)
+    started = now_calcutta()
+    result = _convert_pdf_impl(
+        pdf_path,
+        paths,
+        registry,
+        engine_name=engine_name,
+        repair_citations_flag=repair_citations_flag,
+        move_raw=move_raw,
+    )
+    completed = now_calcutta()
+    record = build_record(
+        started=started,
+        completed=completed,
+        pdf_name=pdf_path.name,
+        result=result,
+        engine_name=engine_name,
+        batch_id=batch_id,
+    )
+    append_record(paths, record)
+    result["started_at"] = record["started_at"]
+    result["completed_at"] = record["completed_at"]
+    result["duration_ms"] = record["duration_ms"]
+    result["token_usage"] = record["token_usage"]
+    return result
+
+def _convert_pdf_impl(
     pdf_path: Path,
     paths: SlipPaths,
     registry: Registry,

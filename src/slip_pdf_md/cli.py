@@ -9,6 +9,7 @@ from pathlib import Path
 from slip_pdf_md import FAMILY, ORG, PRODUCT_NAME, __version__
 from slip_pdf_md.audit import run_audit
 from slip_pdf_md.convert import convert_pdf, convert_vault
+from slip_pdf_md.runlog import write_batch_summary
 from slip_pdf_md.doctor import format_doctor, run_doctor
 from slip_pdf_md.paths import SlipPaths, discover_slip_root
 from slip_pdf_md.registry import Registry
@@ -92,14 +93,29 @@ def cmd_convert(args: argparse.Namespace) -> int:
     if not results:
         print("No PDF files found to convert.")
         return 0
+    summary = write_batch_summary(paths, [r for r in results if r.get("started_at")])
     done = sum(1 for r in results if r["status"] == "DONE" and not r.get("duplicate"))
     dups = sum(1 for r in results if r.get("duplicate"))
     review = sum(1 for r in results if r["status"] == "NEEDS_REVIEW")
+    llm = sum((r.get("token_usage") or {}).get("llm_total_tokens") or 0 for r in results)
+    md_tok = sum((r.get("token_usage") or {}).get("markdown_tokens_estimate") or 0 for r in results)
+    equiv = sum((r.get("token_usage") or {}).get("equivalent_internal_total_tokens") or 0 for r in results)
     print(f"{ORG} — {PRODUCT_NAME}")
     print(f"converted={done} duplicates={dups} needs_review={review}")
+    print(
+        f"tokens llm_total={llm} markdown_est={md_tok} equivalent_internal_total={equiv}"
+    )
+    if summary:
+        print(f"batch_summary={summary}")
+    print(f"run_log={paths.registry_dir / 'logs' / 'Conversion-Run-Log.md'}")
     for row in results:
         mark = "DUP" if row.get("duplicate") else row["status"]
         print(f"  [{mark}] {row.get('output') or row.get('sidecar')}")
+        if row.get("started_at"):
+            print(
+                f"       started={row['started_at']} completed={row['completed_at']} "
+                f"duration_ms={row.get('duration_ms')}"
+            )
     return 0
 
 
