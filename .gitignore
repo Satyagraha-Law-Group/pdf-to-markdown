@@ -1,0 +1,67 @@
+# Virtual environments (never commit)
+.venv/
+venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local conversion outputs and client work product
+markdown/
+md_repair_work/
+MASTER_MACDONE.md
+debug_ocr.txt
+quality_pass/
+legal_chapters/
+
+# Hash registry and job databases (local state)
+*.sqlite
+*.sqlite3
+registry.db
+web_jobs/
+
+# PDFs are client documents or large binaries. Tiny test PDFs are generated at runtime.
+*.pdf
+!tests/fixtures/.gitkeep
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.idea/
+.vscode/
+
+# Secrets
+.env
+.env.*
+!.env.example
+credentials.json
+*.pem
+*.key
+
+# Logs and local reports generated at runtime
+logs/
+*.log
+Audit-Quality-Report-v*.md
+Lawyer-Instruction-Guide-v*.md
+
+# Existing local working artifacts that must not enter the public repo
+PROMPTS/
+MEMORY_LOG*.md
+WORKSPEC_MEMORY*.md
+PDF_vs_Markdown_Discrepancy_Report.md
+PDF_Markdown_Discrepancy_Audit_PROMPT.md
+Markdown_Repair_Log.md
