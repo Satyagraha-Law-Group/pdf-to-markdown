@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Satyagraha Law Group — PDF to Markdown</title>
+  <style>
+    :root { font-family: Georgia, "Times New Roman", serif; color: #1b1b1b; }
+    body { max-width: 720px; margin: 4rem auto; padding: 0 1.5rem; }
+    h1 { font-size: 1.6rem; margin-bottom: 0.2rem; }
+    .family { color: #444; margin-bottom: 2rem; }
+    ol.lawyer { font-size: 1.15rem; line-height: 1.6; }
+    #drop {
+      margin: 2rem 0;
+      border: 2px dashed #333;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      background: #faf7f2;
+    }
+    #drop.hot { background: #f0e6d6; }
+    button { font: inherit; padding: 0.4rem 0.8rem; }
+    #status { min-height: 3rem; white-space: pre-wrap; }
+    a { color: #6b1d1d; }
+  </style>
+</head>
+<body>
+  <h1>Satyagraha Law Group</h1>
+  <p class="family">PDF to Markdown — SLIP Document Ingestion</p>
+  <ol class="lawyer">
+    <li>Drop a PDF</li>
+    <li>Wait</li>
+    <li>Open Markdown</li>
+  </ol>
+  <div id="drop">
+    <p>Drop a PDF here or choose a file.</p>
+    <input id="file" type="file" accept="application/pdf,.pdf">
+  </div>
+  <p id="status"></p>
+  <p><small>Same file under a different name is converted once. Duplicates are never deleted.
+    Layer 2 briefs are out of scope. Localhost only.</small></p>
+  <script>
+    const status = document.getElementById("status");
+    const drop = document.getElementById("drop");
+    const input = document.getElementById("file");
+
+    function say(msg) { status.textContent = msg; }
+
+    async function poll(id) {
+      const res = await fetch("/jobs/" + id);
+      const job = await res.json();
+      if (job.status === "NEW" || job.status === "PROCESSING") {
+        say("Waiting… " + job.status);
+        setTimeout(() => poll(id), 700);
+        return;
+      }
+      if (job.download) {
+        say("Done. Status: " + job.status + (job.duplicate ? " (duplicate — not converted again)" : ""));
+        const a = document.createElement("a");
+        a.href = job.download;
+        a.textContent = "Open Markdown";
+        a.style.display = "block";
+        a.style.marginTop = "1rem";
+        status.appendChild(document.createElement("br"));
+        status.appendChild(a);
+        return;
+      }
+      say("Needs review: " + (job.error || job.status));
+    }
+
+    async function send(file) {
+      say("Uploading " + file.name);
+      const body = new FormData();
+      body.append("file", file, file.name);
+      const res = await fetch("/jobs", { method: "POST", body });
+      if (!res.ok) {
+        say("Upload failed: " + res.status);
+        return;
+      }
+      const job = await res.json();
+      say("Waiting…");
+      poll(job.id);
+    }
+
+    input.addEventListener("change", (ev) => {
+      const file = ev.target.files && ev.target.files[0];
+      if (file) send(file);
+    });
+    ["dragenter", "dragover"].forEach((evt) => {
+      drop.addEventListener(evt, (e) => { e.preventDefault(); drop.classList.add("hot"); });
+    });
+    ["dragleave", "drop"].forEach((evt) => {
+      drop.addEventListener(evt, (e) => { e.preventDefault(); drop.classList.remove("hot"); });
+    });
+    drop.addEventListener("drop", (e) => {
+      const file = e.dataTransfer.files && e.dataTransfer.files[0];
+      if (file) send(file);
+    });
+  </script>
+</body>
+</html>
