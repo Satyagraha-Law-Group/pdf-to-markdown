@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Frequently Asked Questions — Satyagraha Law Group</title>
+  <style>
+    html, body { background:#ffffff !important; color:#000000 !important; }
+    body { margin:0; font: 17px/1.55 "Palatino Linotype", Palatino, "Times New Roman", serif; }
+    a { color:#000000; text-decoration: underline; }
+    header, footer { background:#ffffff; color:#000000; border-color:#000000; }
+    header { border-bottom: 2px solid #000000; padding: 28px 24px 18px; text-align:center; }
+    footer { border-top: 2px solid #000000; padding: 18px 24px 28px; text-align:center; margin-top: 48px; }
+    main { max-width: 820px; margin: 0 auto; padding: 28px 24px; background:#ffffff; color:#000000; }
+    h1, h2, h3, p, li, td, th { color:#000000; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { border: 1px solid #000000; padding: 8px 10px; text-align:left; }
+    pre, code { font-family: Consolas, "Courier New", monospace; color:#000000; background:#ffffff; }
+    pre { border: 1px solid #000000; padding: 12px; overflow:auto; }
+    .sanskrit { font-size: 1.05rem; }
+    .disclaimer { border: 1px solid #000000; padding: 10px 14px; margin: 16px 0; }
+  </style>
+</head>
+<body>
+<header>
+  <div>Satyagraha Law Group</div>
+  <div>PDF to Markdown · SLIP · Legal Research  ·  Practitioner-Scholar</div>
+  <div class="sanskrit">आ नो भद्राः क्रतवो यन्तु विश्वतः</div>
+  <div><em>Let noble thoughts come to us from every side. — Rig Veda</em></div>
+  <div><em>The law is reason, free from passion.</em></div>
+  <div><a href="https://www.satyagraha.com">https://www.satyagraha.com</a></div>
+</header>
+<main>
+<h1>Frequently Asked Questions</h1><p>Satyagraha Law Group — PDF to Markdown (SLIP). Plain answers, taken from what the test suite actually proves.</p><h2>1. What does this tool do?</h2><p>It is the SLIP PDF to Markdown Ingestion Tool for legal PDFs. You put a PDF in, wait, and open a Markdown file. It does not write a case brief and it does not invent table cells.</p><h2>2. How does the tool know two files are the same?</h2><p>It hashes the PDF bytes (SHA-256). The filename is not identity. A rename months later is still the same document.</p><h2>3. What is GUBERNATIO?</h2><p>GUBERNATIO is Latin for governance, steering, direction, and administration. It is the master record after the hash. The identity registry stays one row per hash so several people and devices do not clog it.</p><h2>4. When is a file finished?</h2><p>When convert succeeds, the markdown is only staged. Status is awaiting approval. A Satyagraha lawyer must approve. Only then is GUBERNATIO closed for downstream work.</p><h2>5. What if I drop the same PDF under a new name?</h2><p>It is converted once. The second copy is parked in Duplicates with a note pointing at the first markdown. The tool never deletes duplicates.</p><h2>6. Do I have to use Mistral?</h2><p>No. In a terminal the tool always asks: 1 Local Tesseract (nothing uploaded) or 2 Mistral AI (the PDF is uploaded). Privileged papers stay on the local engine.</p><h2>7. Why is Mistral often better?</h2><p>For many scans it is faster and cleaner than local Tesseract, especially tables and formulas. It uploads the file, so you choose it on purpose.</p><h2>8. Will tomorrow&#x27;s Docling or Claude key work the same way?</h2><p>The lease is built for any remote API. Today the provider is Mistral. The same fingerprint-and-provider slot is ready for Docling, Google, Claude, Hermes, or Reducto.</p><h2>9. Are API keys stored in the database?</h2><p>Never. GUBERNATIO stores only a SHA-256 fingerprint of the key and which provider it belongs to. A raw key is refused.</p><h2>10. What is the sentinel file?</h2><p>A zero-byte lock file next to the database named exactly SLG-pdf_to_md_file_naming_convention.text. It stops two jobs using the same key at once.</p><h2>11. What if convert says HALT?</h2><p>Someone else is already using that same API key. Your PDF stays in RAW. Wait, or use a different key. After fifteen minutes an abandoned lock is treated as free.</p><h2>12. Does local Tesseract take that lock?</h2><p>No. Only a remote API convert takes a key lease.</p><h2>13. What happens to a very large PDF?</h2><p>At Ready for Doc Link, a file over 100 pages or 100 MB is split. You still get one markdown. Extra part files are deleted. The original PDF is kept under Processed.</p><h2>14. What is NEEDS_REVIEW?</h2><p>The engine will not stand behind the extract. The file is routed for a human look. It may be converted again.</p><h2>15. Where do real keys live?</h2><p>In gitignored SECRETS.txt. The example template never overwrites a real key file. Keys are never committed.</p><h2>16. Can downstream tools use a file that is only processed?</h2><p>Not as a closed record. Downstream should wait until a lawyer has approved, so GUBERNATIO shows the loop is closed.</p><h2>17. How do I see what is waiting on me?</h2><p>Run the awaiting-approval report. It lists processed files that a lawyer has not yet approved.</p><h2>18. How do I approve a file?</h2><p>Run approve with the SHA-256 (or the markdown file) and your name. GUBERNATIO then records who approved and when.</p><h2>19. Will a failed computer lose the register?</h2><p>The live sqlite has a sibling backup. If the live file is deleted, the next open restores it. If both copies are gone, it can rebuild from markdown front matter.</p><h2>20. Does the markdown remember the source?</h2><p>Yes. YAML front matter carries the source filename, SHA-256, engine, page count, status, and convert time. The body uses Page N headings.</p>
+<div class="disclaimer">This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.</div>
+<h2>Related documents</h2>
+<ul><li><a href="../README.md">Product overview</a> (wiki [[README]])</li><li><a href="Mistral-Engine-Guide-v1-03-09-2026-04-39-31.md">Lawyer user guide</a> (wiki [[Mistral-Engine-Guide]])</li><li><a href="Marker-Mistral-Engine-v1-03-09-2026-04-05-21.md">Mistral engine mapping</a> (wiki [[Marker-Mistral-Engine]])</li><li><a href="Product-Requirements-Spec-v1-02-09-2026-22-55-00.md">Requirements</a> (wiki [[Product-Requirements-Spec]])</li><li><a href="System-Design-Document-v1-02-09-2026-22-55-00.md">Design</a> (wiki [[System-Design-Document]])</li><li><a href="Implementation-Plan-Guide-v1-02-09-2026-22-55-00.md">Plan</a> (wiki [[Implementation-Plan-Guide]])</li><li><a href="System-Architecture-Diagram-v1-02-09-2026-22-55-00.md">Architecture</a> (wiki [[System-Architecture-Diagram]])</li><li><a href="Process-Workflow-Guide-v1-02-09-2026-22-55-00.md">Workflow</a> (wiki [[Process-Workflow-Guide]])</li><li><a href="Slip-Markdown-Glossary-v1-03-09-2026-08-35-00.md">Glossary</a> (wiki [[Slip-Markdown-Glossary]])</li></ul>
+</main>
+<footer>
+  <div>Satyagraha Law Group · PDF to Markdown · SLIP</div>
+  <div>आ नो भद्राः क्रतवो यन्तु विश्वतः</div>
+  <div>Let noble thoughts come to us from every side. — Rig Veda</div>
+  <div>The law is reason, free from passion.</div>
+  <div class="disclaimer">This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.</div>
+  <div><a href="https://www.satyagraha.com">https://www.satyagraha.com</a></div>
+</footer>
+</body>
+</html>

@@ -1,45 +1,39 @@
-# SKILL: Handle duplicate PDFs
+# Satyagraha Law Group
 
-**Satyagraha Law Group** — PDF to Markdown  
-**Playbook:** 04-Handle-Duplicates  
-**Rule:** filename is not identity. SHA-256 is. No AI deletion of duplicates.
+**PDF to Markdown**  ·  SLIP  ·  Legal Research  ·  Practitioner-Scholar
 
-## Goal
+आ नो भद्राः क्रतवो यन्तु विश्वतः
 
-Explain and route repeats. Keep the bytes.
+*Let noble thoughts come to us from every side. — Rig Veda*
 
-## Parameters
+*The law is reason, free from passion.*
 
-| Name | Required |
-| --- | --- |
-| `{{SLIP_ROOT}}` | yes |
+[https://www.satyagraha.com](https://www.satyagraha.com)
 
-## What the tool already did
+> This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.
 
-On `convert`, a PDF whose SHA-256 is `DONE` was copied to `50_90_DUPLICATES` with a `.sidecar.md` naming:
+---
 
-- duplicate filename
-- hash
-- original filename
-- canonical Markdown path
-- timestamp
+Satyagraha Law Group publishes a SLIP PDF to Markdown Ingestion Tool. It does not publish a library.
 
-The first conversion in `20_03_CLEAN_MARKDOWN` was left untouched.
+**Satyagraha Law Group**  ·  SLIP PDF to Markdown Ingestion Tool  ·  SLIP
 
-## Steps for an agent
+Founded by Anil B. (Lawyer), Satyagraha Law Group provides legal services for seekers looking for help by searching for Corporate Law, Civil Law, Criminal Law, Writs, High Court Lawyer, NRI Lawyer, Lawyer In Hyderabad, India.
 
-1. List `{{SLIP_ROOT}}/50_90_DUPLICATES`.
-2. Open each `.sidecar.md`. Summarise for the lawyer: "this is the same document as X".
-3. Do **not** `unlink`, `rm`, shred, or git-ignore the duplicate out of existence as a cleanup step.
-4. Do **not** run convert again on that hash expecting a second Markdown.
-5. If the lawyer says the second file is actually a **different scan**, hash it. Different bytes ⇒ new document; convert is correct.
+Need Legal Help. [Click here](https://calendly.com/anil-satyagraha/15min).
 
-## Verification
+आ नो भद्राः क्रतवो यन्तु विश्वतः
 
-- Registry still has one `documents` row per SHA-256.
-- Two or more `sightings` rows for that hash.
-- Duplicate files still on disk.
+*Let noble thoughts come to us from every side. — Rig Veda*
 
-## Stop conditions
+*The law is reason, free from passion.*
 
-Any request to "remove dupes", "keep only the latest filename", or "let the model decide which copy to keep" is out of scope. Route, sidecar, stop.
+> This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.
+
+[https://www.satyagraha.com](https://www.satyagraha.com)
+
+This site is built from **real-world experience helping clients seeking Justice**, case by case — based on our work involving Legal Research, Drafting, Pleadings, Representation and beyond.
+
+Explore further: [Website](https://www.satyagraha.com) · [YouTube](https://www.youtube.com/@satyagrahalawgroup2002) · [Udemy Courses](https://www.udemy.com/user/anil-b-23/) · [LinkedIn](https://www.linkedin.com/in/anilsatyagraha/) · [Facebook](https://www.facebook.com/satyagrahalawgroup) · [Twitter / X](https://twitter.com/_satyagraha) · [WordPress](https://satyagrahalawgroup.wordpress.com/) · [Instagram](https://www.instagram.com/satyagrahalawgroup/) · [Pinterest](https://in.pinterest.com/satyagrahalawgroup/) · [Tumblr](https://www.tumblr.com/blog/satyagrahalawgroup) · [SoundCloud](https://soundcloud.com/satyagrahalawgroup) · [Podomatic](http://anil-satyagraha.podomatic.com/) · [Newsletter](https://satyagraha.substack.com/) · [WhatsApp](https://api.whatsapp.com/send?phone=917095776633)
+
+Need Legal Help? [Click Here For Next Steps](https://calendly.com/anil-satyagraha/15min)

@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 from slip_pdf_md.engines.base import ConversionResult, EngineAdapter
+from slip_pdf_md.engines.mistral_engine import MistralOcrEngine
 from slip_pdf_md.engines.pymupdf_engine import PyMuPdfTesseractEngine
 
 REGISTRY: dict[str, type] = {
     "pymupdf": PyMuPdfTesseractEngine,
     "pymupdf+tesseract": PyMuPdfTesseractEngine,
+    "mistral": MistralOcrEngine,
+    "mistralai": MistralOcrEngine,
+    "mistral-ocr": MistralOcrEngine,
 }
 
 
@@ -19,4 +23,4 @@ def get_engine(name: str = "pymupdf") -> EngineAdapter:
     return cls()
 
 
-__all__ = ["ConversionResult", "EngineAdapter", "get_engine", "REGISTRY"]
+__all__ = ["REGISTRY", "ConversionResult", "EngineAdapter", "get_engine"]

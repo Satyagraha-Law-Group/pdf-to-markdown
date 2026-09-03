@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Slip Markdown Glossary — Satyagraha Law Group</title>
+  <style>
+    html, body { background:#ffffff !important; color:#000000 !important; }
+    body { margin:0; font: 17px/1.55 "Palatino Linotype", Palatino, "Times New Roman", serif; }
+    a { color:#000000; text-decoration: underline; }
+    header, footer { background:#ffffff; color:#000000; }
+    header { border-bottom: 2px solid #000000; padding: 28px 24px 18px; text-align:center; }
+    footer { border-top: 2px solid #000000; padding: 18px 24px 28px; text-align:center; margin-top: 48px; }
+    main { max-width: 920px; margin: 0 auto; padding: 28px 24px; background:#ffffff; color:#000000; }
+    h1, h2, h3, p, li, td, th { color:#000000; }
+    table { width:100%; border-collapse: collapse; margin: 12px 0 24px; }
+    th, td { border: 1px solid #000000; padding: 8px 10px; text-align:left; }
+    pre, code { font-family: Consolas, "Courier New", monospace; color:#000000; background:#ffffff; }
+    pre { border: 1px solid #000000; padding: 12px; overflow:auto; }
+    .sanskrit { font-size: 1.05rem; }
+    .disclaimer { border: 1px solid #000000; padding: 10px 14px; margin: 16px 0; }
+  </style>
+</head>
+<body>
+<header>
+  <div>Satyagraha Law Group</div>
+  <div>PDF to Markdown · SLIP · Legal Research  ·  Practitioner-Scholar</div>
+  <div class="sanskrit">आ नो भद्राः क्रतवो यन्तु विश्वतः</div>
+  <div><em>Let noble thoughts come to us from every side. — Rig Veda</em></div>
+  <div><em>The law is reason, free from passion.</em></div>
+  <div><a href="https://www.satyagraha.com">https://www.satyagraha.com</a></div>
+</header>
+<main>
+<h1>Slip Markdown Glossary</h1>
+<h2>GUBERNATIO</h2>
+<p><strong>GUBERNATIO</strong> is the proper Latin noun meaning <em>the system of governance, steering, direction, and administration</em>.</p>
+<p>In this product it is a SQLite table named <code>GUBERNATIO</code> inside the Document-Hash-Registry. <strong>GUBERNATIO is the entry gate.</strong> After SHA-256, convert asks whether this hash is already <code>DONE</code>. If yes, park the duplicate and update the identity registry second. <code>documents</code> stays one row per SHA-256.</p>
+<h2>Mistral key lease</h2>
+<p>The same Mistral API key must not be dual-used. Local Tesseract takes no lease. GUBERNATIO stores a SHA-256 <em>fingerprint</em> of the key, never the key. The sentinel is a zero-byte file next to the sqlite named exactly <code>SLG-pdf_to_md_file_naming_convention.text</code>. Default lease is 15 minutes; an expired <code>RUNNING</code> lease is free so the next lawyer is not stuck. A held unexpired lease returns <code>HALT</code> and does not move RAW.</p>
+<pre>slip-pdf-md registry gubernatio --vault "PATH/TO/SLIP_DOCUMENT_PROCESSING"</pre>
+<h2>Identity</h2>
+<table>
+<thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td>SHA-256</td><td>Hash of the PDF bytes. Filename is not identity.</td></tr>
+<tr><td>Document-Hash-Registry</td><td>One <code>documents</code> row per hash.</td></tr>
+<tr><td>GUBERNATIO</td><td>Per-file steering table. Filename, host, agent, step.</td></tr>
+<tr><td>DONE</td><td>Converted. Later same bytes are a duplicate.</td></tr>
+</tbody>
+</table>
+<h2>Caps</h2>
+<p>No convert job may exceed 100 pages or 100 MB. Split happens at Ready for Doc Link. Parts are deleted after a clean merge. The original PDF goes to <code>60_90_PROCESSED / date / Stem / Stem.pdf</code>.</p>
+<h2>Memory files</h2>
+<p>Durable copies live in the tool folder, not only in the assistant: <code>Tool-Creation-Memory-v1-03-09-2026-05-05-24.md</code> (global) and <code>Session-Learning-Notes-v1-03-09-2026-05-05-24.md</code> (session).</p>
+<div class="disclaimer">This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.</div>
+<p>Related: <a href="Convert-Pipeline-Flowchart-v1-03-09-2026-06-48-52.html">flowchart</a> · <a href="../README.md">README</a></p>
+</main>
+<footer>
+  <div>Satyagraha Law Group · PDF to Markdown · SLIP</div>
+  <div>आ नो भद्राः क्रतवो यन्तु विश्वतः</div>
+  <div>Let noble thoughts come to us from every side. — Rig Veda</div>
+  <div>The law is reason, free from passion.</div>
+  <div class="disclaimer">This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.</div>
+  <div><a href="https://www.satyagraha.com">https://www.satyagraha.com</a></div>
+</footer>
+</body>
+</html>

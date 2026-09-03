@@ -1,13 +1,14 @@
-"""Environment checks: Python, PyMuPDF, Tesseract, SLIP folders."""
+"""Environment checks: Python, PyMuPDF, Tesseract, SLIP folders, Mistral key, registry."""
 
 from __future__ import annotations
 
 import shutil
 import sys
-from pathlib import Path
 
 from slip_pdf_md.engines.pymupdf_engine import TESSERACT_WINDOWS, configure_tesseract
 from slip_pdf_md.paths import SLIP_DIR_NAMES, SlipPaths
+from slip_pdf_md.registry import Registry, RegistryCorrupt
+from slip_pdf_md.secrets import mistral_key_status
 
 
 def run_doctor(paths: SlipPaths | None = None) -> dict:
@@ -40,6 +41,9 @@ def run_doctor(paths: SlipPaths | None = None) -> dict:
     except Exception as exc:
         add("pytesseract", False, str(exc))
 
+    vault_root = paths.root if paths is not None else None
+    add("mistral_api_key", True, mistral_key_status(vault_root=vault_root))
+
     if paths is not None:
         missing = [name for name in SLIP_DIR_NAMES if not (paths.root / name).is_dir()]
         add("slip_folders", not missing, "all present" if not missing else "missing: " + ", ".join(missing))
@@ -53,10 +57,32 @@ def run_doctor(paths: SlipPaths | None = None) -> dict:
             add("write_access", False, str(exc))
         else:
             add("write_access", writable, str(paths.root))
-        add("registry_dir", True, str(paths.registry_path))
+        add("registry_path", True, str(paths.registry_path))
+        try:
+            registry = Registry(paths.registry_path)
+            health = registry.health()
+            registry.close()
+            add(
+                "registry_integrity",
+                health["integrity_ok"],
+                f"documents={health['documents']} sightings={health['sightings']} GUBERNATIO={health.get('gubernatio', 0)}",
+            )
+            add("registry_backup", health["backup_exists"], health["backup_path"])
+            if health["restored_from_backup"]:
+                add("registry_restored", True, "live sqlite was missing; restored from .bak")
+            from slip_pdf_md.key_lease import SENTINEL_NAME, sentinel_path
+
+            sent = sentinel_path(paths.registry_dir)
+            add(
+                "mistral_key_lease_sentinel",
+                True,
+                "absent (free)" if not sent.exists() else f"present {SENTINEL_NAME} (a Mistral convert may be RUNNING)",
+            )
+        except RegistryCorrupt as exc:
+            add("registry_integrity", False, str(exc))
 
     return {
-        "ok": all(c["ok"] for c in checks if c["name"] != "tesseract"),
+        "ok": all(c["ok"] for c in checks if c["name"] not in {"tesseract", "mistral_api_key"}),
         "checks": checks,
     }
 

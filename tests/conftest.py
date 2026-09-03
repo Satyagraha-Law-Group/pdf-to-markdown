@@ -12,6 +12,8 @@ if str(SRC) not in sys.path:
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+pytest_plugins = ["slip_pdf_md.test_report"]
+
 
 @pytest.fixture
 def slip_tree(tmp_path):

@@ -17,11 +17,11 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from slip_pdf_md import FAMILY, ORG, PRODUCT_NAME  # noqa: E402
-from slip_pdf_md.convert import convert_pdf  # noqa: E402
-from slip_pdf_md.paths import SlipPaths  # noqa: E402
-from slip_pdf_md.registry import Registry  # noqa: E402
-from slip_pdf_md.scaffold import create_slip_tree  # noqa: E402
+from slip_pdf_md import FAMILY, ORG, PRODUCT_NAME
+from slip_pdf_md.convert import convert_pdf
+from slip_pdf_md.paths import SlipPaths
+from slip_pdf_md.registry import Registry
+from slip_pdf_md.scaffold import create_slip_tree
 
 STATIC = Path(__file__).resolve().parent / "static"
 JOBS_ROOT = Path(os.environ.get("SLIP_WEB_JOBS", ROOT / "web_jobs"))

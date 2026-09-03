@@ -1,7 +1,35 @@
+# Satyagraha Law Group
+
+**PDF to Markdown**  ·  SLIP  ·  Legal Research  ·  Practitioner-Scholar
+
+आ नो भद्राः क्रतवो यन्तु विश्वतः
+
+*Let noble thoughts come to us from every side. — Rig Veda*
+
+*The law is reason, free from passion.*
+
+[https://www.satyagraha.com](https://www.satyagraha.com)
+
+> This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.
+
+---
+<!-- Related documents: Obsidian wiki links AND GitHub relative links -->
+<!-- [[README]] [[Mistral-Engine-Guide]] [[Marker-Mistral-Engine]] [[Product-Requirements-Spec]] [[System-Design-Document]] [[Implementation-Plan-Guide]] [[System-Architecture-Diagram]] [[Process-Workflow-Guide]] -->
+
+## Related documents
+
+- [[README]] — [Product overview](../README.md)
+- [[Mistral-Engine-Guide]] — [Lawyer user guide](Mistral-Engine-Guide-v1-03-09-2026-04-39-31.md)
+- [[Marker-Mistral-Engine]] — [Mistral engine mapping](Marker-Mistral-Engine-v1-03-09-2026-04-05-21.md)
+- [[Product-Requirements-Spec]] — [Requirements](Product-Requirements-Spec-v1-02-09-2026-22-55-00.md)
+- [[System-Design-Document]] — [Design](System-Design-Document-v1-02-09-2026-22-55-00.md)
+- [[Implementation-Plan-Guide]] — [Plan](Implementation-Plan-Guide-v1-02-09-2026-22-55-00.md)
+- [[System-Architecture-Diagram]] — [Architecture](System-Architecture-Diagram-v1-02-09-2026-22-55-00.md)
+- [[Process-Workflow-Guide]] — [Workflow](Process-Workflow-Guide-v1-02-09-2026-22-55-00.md)
 # Product Requirements Specification
 
 **Satyagraha Law Group**  
-**Product:** PDF to Markdown  
+**Product:** SLIP PDF to Markdown Ingestion Tool  
 **Family:** SLIP — Satyagraha Law Group Legal Intelligence Platform  
 **Document:** Product-Requirements-Spec-v1-02-09-2026-22-55-00  
 **Status:** Approved for Phase 1 (local) and Phase 2 (web) implementation  
@@ -20,7 +48,7 @@ Existing converters fail the practice in four ways:
 3. **The same book is converted twice** because someone renamed the file. Filename is treated as identity. Disk and attention are wasted; worse, two slightly different Markdown files appear and a lawyer cannot tell which is canonical.
 4. **Tools invent cells** or silently drop rows when OCR is unsure. For legal work that is a fabrication.
 
-The product Satyagraha Law Group needs is not "an AI that reads PDFs". It is a **photocopier with a hash register**: Drop PDF → Wait → Open Markdown. Layer 1 is faithful extract. Layer 2 (case briefs, project briefs) is a different product and is out of scope except for keeping the empty folders so the platform stays coherent.
+The product Satyagraha Law Group needs is not "an AI that reads PDFs". It is a **SLIP PDF to Markdown Ingestion Tool with a hash register**: Drop PDF → Wait → Open Markdown. Layer 1 is faithful extract. Layer 2 (case briefs, project briefs) is a different product and is out of scope except for keeping the empty folders so the platform stays coherent.
 
 ## 2. Users
 
@@ -35,7 +63,7 @@ Confidentiality is a user requirement, not an afterthought. Client PDFs do not g
 
 ## 3. Product principles
 
-1. **Photocopier UX.** The lawyer does not configure engines. Drop, wait, open.
+1. **SLIP PDF to Markdown Ingestion Tool.** The lawyer does not configure engines. Drop, wait, open.
 2. **Hash is identity.** SHA-256 of file bytes. Filename is a label only.
 3. **Convert once.** Same PDF, different name = one Markdown. The second drop is a duplicate, not a second conversion.
 4. **No AI deletion of duplicates.** Route, sidecar, leave the bytes. A human decides.
@@ -210,3 +238,29 @@ The production vault already contains a working converter, a `.venv`, `markdown/
 ## 13. Success
 
 Satyagraha Law Group can clone https://github.com/Satyagraha-Law-Group/pdf-to-markdown, run deploy, drop a PDF, and open Markdown — locally or via the web drop zone — with duplicates routed, hashes unique, and Layer 2 folders waiting for a later tool.
+
+---
+
+Satyagraha Law Group publishes a SLIP PDF to Markdown Ingestion Tool. It does not publish a library.
+
+**Satyagraha Law Group**  ·  SLIP PDF to Markdown Ingestion Tool  ·  SLIP
+
+Founded by Anil B. (Lawyer), Satyagraha Law Group provides legal services for seekers looking for help by searching for Corporate Law, Civil Law, Criminal Law, Writs, High Court Lawyer, NRI Lawyer, Lawyer In Hyderabad, India.
+
+Need Legal Help. [Click here](https://calendly.com/anil-satyagraha/15min).
+
+आ नो भद्राः क्रतवो यन्तु विश्वतः
+
+*Let noble thoughts come to us from every side. — Rig Veda*
+
+*The law is reason, free from passion.*
+
+> This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.
+
+[https://www.satyagraha.com](https://www.satyagraha.com)
+
+This site is built from **real-world experience helping clients seeking Justice**, case by case — based on our work involving Legal Research, Drafting, Pleadings, Representation and beyond.
+
+Explore further: [Website](https://www.satyagraha.com) · [YouTube](https://www.youtube.com/@satyagrahalawgroup2002) · [Udemy Courses](https://www.udemy.com/user/anil-b-23/) · [LinkedIn](https://www.linkedin.com/in/anilsatyagraha/) · [Facebook](https://www.facebook.com/satyagrahalawgroup) · [Twitter / X](https://twitter.com/_satyagraha) · [WordPress](https://satyagrahalawgroup.wordpress.com/) · [Instagram](https://www.instagram.com/satyagrahalawgroup/) · [Pinterest](https://in.pinterest.com/satyagrahalawgroup/) · [Tumblr](https://www.tumblr.com/blog/satyagrahalawgroup) · [SoundCloud](https://soundcloud.com/satyagrahalawgroup) · [Podomatic](http://anil-satyagraha.podomatic.com/) · [Newsletter](https://satyagraha.substack.com/) · [WhatsApp](https://api.whatsapp.com/send?phone=917095776633)
+
+Need Legal Help? [Click Here For Next Steps](https://calendly.com/anil-satyagraha/15min)

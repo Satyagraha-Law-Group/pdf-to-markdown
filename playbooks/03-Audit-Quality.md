@@ -1,52 +1,39 @@
-# SKILL: Audit Markdown quality
+# Satyagraha Law Group
 
-**Satyagraha Law Group** — PDF to Markdown  
-**Playbook:** 03-Audit-Quality  
-**Depends on:** 02-Convert-Documents
+**PDF to Markdown**  ·  SLIP  ·  Legal Research  ·  Practitioner-Scholar
 
-## Goal
+आ नो भद्राः क्रतवो यन्तु विश्वतः
 
-Flag extracts the photocopier should not silently bless. Write one three-word-named report.
+*Let noble thoughts come to us from every side. — Rig Veda*
 
-## Parameters
+*The law is reason, free from passion.*
 
-| Name | Required |
-| --- | --- |
-| `{{SLIP_ROOT}}` | yes |
-| `{{PYTHON}}` | no |
+[https://www.satyagraha.com](https://www.satyagraha.com)
 
-## Steps
+> This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.
 
-1. Run:
+---
 
-```text
-{{PYTHON}} -m slip_pdf_md audit --vault "{{SLIP_ROOT}}"
-```
+Satyagraha Law Group publishes a SLIP PDF to Markdown Ingestion Tool. It does not publish a library.
 
-2. Confirm the report filename matches:
+**Satyagraha Law Group**  ·  SLIP PDF to Markdown Ingestion Tool  ·  SLIP
 
-`Word1-Word2-Word3-vN-DD-MM-YYYY-HH-MI-SS.ext`
+Founded by Anil B. (Lawyer), Satyagraha Law Group provides legal services for seekers looking for help by searching for Corporate Law, Civil Law, Criminal Law, Writs, High Court Lawyer, NRI Lawyer, Lawyer In Hyderabad, India.
 
-Exactly three Title-Case words, hyphens only, 24-hour Asia/Calcutta. The tool writes `Audit-Quality-Report-v1-…md` under `90_00_PROJECT_TOOLING/pdf-to-markdown/`.
+Need Legal Help. [Click here](https://calendly.com/anil-satyagraha/15min).
 
-3. Read flags:
+आ नो भद्राः क्रतवो यन्तु विश्वतः
 
-| Flag | Meaning |
-| --- | --- |
-| `MISSING_FRONT_MATTER` | Not a product output |
-| `NO_PAGE_HEADINGS` | Lost `## Page N` contract |
-| `EMPTY_BODY` | Blank photocopy |
-| `UNRECOVERED_TABLE` | Honest gap — do not invent cells |
-| `ORPHAN_DONE` | Registry says DONE but file missing |
-| `STALE_PROCESSING` | Crash residue |
+*Let noble thoughts come to us from every side. — Rig Veda*
 
-4. Move truly bad files' attention to `70_99_NEEDS_REVIEW`. Do not delete `20_03` files unless a lawyer asks.
+*The law is reason, free from passion.*
 
-## Verification
+> This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.
 
-- Report exists and matches the regex in `slip_pdf_md.naming.REPORT_NAME_RE`.
-- Report mentions Satyagraha Law Group.
+[https://www.satyagraha.com](https://www.satyagraha.com)
 
-## Stop conditions
+This site is built from **real-world experience helping clients seeking Justice**, case by case — based on our work involving Legal Research, Drafting, Pleadings, Representation and beyond.
 
-- Do not auto-rewrite legal prose with an LLM "to improve quality". Repair is playbook 05, mechanical only.
+Explore further: [Website](https://www.satyagraha.com) · [YouTube](https://www.youtube.com/@satyagrahalawgroup2002) · [Udemy Courses](https://www.udemy.com/user/anil-b-23/) · [LinkedIn](https://www.linkedin.com/in/anilsatyagraha/) · [Facebook](https://www.facebook.com/satyagrahalawgroup) · [Twitter / X](https://twitter.com/_satyagraha) · [WordPress](https://satyagrahalawgroup.wordpress.com/) · [Instagram](https://www.instagram.com/satyagrahalawgroup/) · [Pinterest](https://in.pinterest.com/satyagrahalawgroup/) · [Tumblr](https://www.tumblr.com/blog/satyagrahalawgroup) · [SoundCloud](https://soundcloud.com/satyagrahalawgroup) · [Podomatic](http://anil-satyagraha.podomatic.com/) · [Newsletter](https://satyagraha.substack.com/) · [WhatsApp](https://api.whatsapp.com/send?phone=917095776633)
+
+Need Legal Help? [Click Here For Next Steps](https://calendly.com/anil-satyagraha/15min)

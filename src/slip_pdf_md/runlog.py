@@ -7,6 +7,8 @@ Local engines (PyMuPDF / Tesseract) use zero LLM tokens. We still record:
   vision-LLM conversion of the same page count would have cost, using
   the 150 dpi high-detail tiling estimate of 1,105 input tokens/page
   plus markdown_tokens_estimate output tokens.
+Mistral OCR is billed per page, not tokens; pages_processed is logged
+under token_usage.mistral_pages_processed.
 """
 
 from __future__ import annotations
@@ -16,17 +18,115 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from slip_pdf_md.naming import iso_calcutta, now_calcutta, three_word_filename
+from slip_pdf_md.naming import (
+    iso_calcutta,
+    now_calcutta,
+    resolve_generated_path,
+    three_word_filename,
+)
 from slip_pdf_md.paths import SlipPaths
 
 VISION_TOKENS_PER_PAGE = 1105  # 150 dpi, 512px tiles, high-detail formula
 CHARS_PER_TOKEN = 4
 
 
+TOKEN_USAGE_KEYS = (
+    "llm_input_tokens",
+    "llm_output_tokens",
+    "llm_total_tokens",
+    "markdown_tokens_estimate",
+    "equivalent_internal_vision_input_tokens",
+    "equivalent_internal_total_tokens",
+    "mistral_pages_processed",
+)
+
+
 def estimate_markdown_tokens(text: str) -> int:
     if not text:
         return 0
     return max(1, (len(text) + CHARS_PER_TOKEN - 1) // CHARS_PER_TOKEN)
+
+
+def engine_token_note(engine_name: str) -> str:
+    if str(engine_name).lower().startswith("mistral"):
+        return (
+            "mistral OCR is billed per page, not chat tokens; llm_* stay 0. "
+            "mistral_pages_processed is the OCR page count returned by the API. "
+            f"equivalent_internal_vision_input_tokens = page_count * {VISION_TOKENS_PER_PAGE}."
+        )
+    return (
+        "slip-pdf-md convert uses local PyMuPDF/Tesseract; "
+        "llm_* are 0 unless a future LLM engine is selected. "
+        f"equivalent_internal_vision_input_tokens = page_count * {VISION_TOKENS_PER_PAGE} "
+        "(150 dpi high-detail tile estimate)."
+    )
+
+
+def build_token_usage(
+    *,
+    markdown_text: str = "",
+    page_count: int = 0,
+    engine_name: str = "pymupdf",
+    llm_input_tokens: int = 0,
+    llm_output_tokens: int = 0,
+    mistral_pages_processed: int | None = None,
+    include_notes: bool = True,
+) -> dict[str, Any]:
+    """Token usage for one PDF-to-markdown convert of this file."""
+    pages = int(page_count or 0)
+    text = markdown_text or ""
+    if pages == 0 and text:
+        pages = text.count("## Page ")
+    md_tokens = estimate_markdown_tokens(text) if text else 0
+    llm_in = int(llm_input_tokens or 0)
+    llm_out = int(llm_output_tokens or 0)
+    vision_in = pages * VISION_TOKENS_PER_PAGE if pages else 0
+    usage: dict[str, Any] = {
+        "llm_input_tokens": llm_in,
+        "llm_output_tokens": llm_out,
+        "llm_total_tokens": llm_in + llm_out,
+        "markdown_tokens_estimate": md_tokens,
+        "equivalent_internal_vision_input_tokens": vision_in,
+        "equivalent_internal_total_tokens": vision_in + md_tokens,
+        "mistral_pages_processed": mistral_pages_processed,
+    }
+    if include_notes:
+        usage["notes"] = engine_token_note(engine_name)
+    return usage
+
+
+def dumps_token_usage(usage: dict[str, Any] | str | None) -> str | None:
+    """Compact JSON for the token_usage column. Notes stay in the run log."""
+    if usage is None:
+        return None
+    if isinstance(usage, str):
+        text = usage.strip()
+        return text or None
+    stored = {key: usage.get(key) for key in TOKEN_USAGE_KEYS}
+    return json.dumps(stored, ensure_ascii=False, separators=(",", ":"))
+
+
+def parse_token_usage(raw: str | dict | None) -> dict[str, Any]:
+    if not raw:
+        return {}
+    if isinstance(raw, dict):
+        return dict(raw)
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def token_usage_summary(raw: str | dict | None) -> str:
+    data = parse_token_usage(raw)
+    if not data:
+        return ""
+    return (
+        f"md={data.get('markdown_tokens_estimate', '')} "
+        f"llm={data.get('llm_total_tokens', '')} "
+        f"equiv={data.get('equivalent_internal_total_tokens', '')}"
+    )
 
 
 def logs_dir(paths: SlipPaths) -> Path:
@@ -36,11 +136,25 @@ def logs_dir(paths: SlipPaths) -> Path:
 
 
 def jsonl_path(paths: SlipPaths) -> Path:
-    return logs_dir(paths) / "runs.jsonl"
+    return resolve_generated_path(
+        logs_dir(paths),
+        "Conversion",
+        "Runs",
+        "Journal",
+        "jsonl",
+        legacy_names=("runs.jsonl",),
+    )
 
 
 def markdown_log_path(paths: SlipPaths) -> Path:
-    return logs_dir(paths) / "Conversion-Run-Log.md"
+    return resolve_generated_path(
+        logs_dir(paths),
+        "Conversion",
+        "Run",
+        "Log",
+        "md",
+        legacy_names=("Conversion-Run-Log.md",),
+    )
 
 
 def _read_output_text(output: str | None) -> str:
@@ -66,13 +180,21 @@ def build_record(
 ) -> dict[str, Any]:
     output = result.get("output")
     text = _read_output_text(output)
-    md_tokens = estimate_markdown_tokens(text)
     pages = int(result.get("page_count") or 0)
-    if pages == 0 and text:
-        pages = text.count("## Page ")
-    llm_in = int(result.get("llm_input_tokens") or 0)
-    llm_out = int(result.get("llm_output_tokens") or 0)
-    vision_in = pages * VISION_TOKENS_PER_PAGE if pages else 0
+    usage = result.get("token_usage") or build_token_usage(
+        markdown_text=text,
+        page_count=pages,
+        engine_name=engine_name,
+        llm_input_tokens=int(result.get("llm_input_tokens") or 0),
+        llm_output_tokens=int(result.get("llm_output_tokens") or 0),
+        mistral_pages_processed=result.get("mistral_pages_processed"),
+        include_notes=True,
+    )
+    pages = int(usage.get("page_count") or pages or 0)
+    if pages == 0:
+        pages = int(result.get("page_count") or 0)
+        if pages == 0 and text:
+            pages = text.count("## Page ")
     duration_ms = int((completed - started).total_seconds() * 1000)
     status = result.get("status") or "UNKNOWN"
     if result.get("duplicate"):
@@ -91,20 +213,7 @@ def build_record(
         "page_count": pages,
         "output": output,
         "batch_id": batch_id,
-        "token_usage": {
-            "llm_input_tokens": llm_in,
-            "llm_output_tokens": llm_out,
-            "llm_total_tokens": llm_in + llm_out,
-            "markdown_tokens_estimate": md_tokens,
-            "equivalent_internal_vision_input_tokens": vision_in,
-            "equivalent_internal_total_tokens": vision_in + md_tokens,
-            "notes": (
-                "slip-pdf-md convert uses local PyMuPDF/Tesseract; "
-                "llm_* are 0 unless a future LLM engine is selected. "
-                f"equivalent_internal_vision_input_tokens = page_count * {VISION_TOKENS_PER_PAGE} "
-                "(150 dpi high-detail tile estimate)."
-            ),
-        },
+        "token_usage": usage,
     }
 
 
@@ -119,7 +228,7 @@ def _ensure_markdown_header(path: Path) -> None:
                 "Satyagraha Law Group — PDF to Markdown (SLIP).",
                 "",
                 "Each convert writes one row. Times are Asia/Calcutta.",
-                "`llm_*` tokens are actual LLM usage (0 for the local engine).",
+                "`llm_*` tokens are actual LLM usage (0 for the local engine and for Mistral OCR).",
                 "`markdown_tokens_estimate` is the size of the output Markdown (chars/4).",
                 "`equivalent_internal_total_tokens` is the estimated cost of converting",
                 f"the same PDF internally with a vision LLM ({VISION_TOKENS_PER_PAGE} input tokens/page + markdown output).",
@@ -177,7 +286,7 @@ def write_batch_summary(paths: SlipPaths, records: list[dict[str, Any]]) -> Path
         f"- markdown_tokens_estimate: {md_tok}",
         f"- equivalent_internal_total_tokens: {equiv}",
         "",
-        "See `Conversion-Run-Log.md` and `runs.jsonl` for per-file rows.",
+        "See the Conversion-Run-Log and Conversion-Runs-Journal files for per-file rows.",
         "",
     ]
     dest.write_text("\n".join(lines), encoding="utf-8")

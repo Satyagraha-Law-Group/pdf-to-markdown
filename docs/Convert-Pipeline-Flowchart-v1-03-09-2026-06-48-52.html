@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Convert Pipeline Flowchart — Satyagraha Law Group</title>
+  <style>
+    html, body { background:#ffffff !important; color:#000000 !important; }
+    body { margin:0; font: 17px/1.55 "Palatino Linotype", Palatino, "Times New Roman", serif; }
+    a { color:#000000; text-decoration: underline; }
+    header, footer { background:#ffffff; color:#000000; border-color:#000000; }
+    header { border-bottom: 2px solid #000000; padding: 28px 24px 18px; text-align:center; }
+    footer { border-top: 2px solid #000000; padding: 18px 24px 28px; text-align:center; margin-top: 48px; }
+    main { max-width: 920px; margin: 0 auto; padding: 28px 24px; background:#ffffff; color:#000000; }
+    h1, h2, h3, p, li, td, th { color:#000000; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { border: 1px solid #000000; padding: 8px 10px; text-align:left; }
+    pre, code { font-family: Consolas, "Courier New", monospace; color:#000000; background:#ffffff; }
+    pre { border: 1px solid #000000; padding: 12px; overflow:auto; }
+    .sanskrit { font-size: 1.05rem; }
+    .disclaimer { border: 1px solid #000000; padding: 10px 14px; margin: 16px 0; }
+    figure { margin: 24px 0; padding: 0; }
+    figure img {
+      display: block;
+      width: 100%;
+      max-width: 920px;
+      height: auto;
+      background: #ffffff;
+      border: 2px solid #000000;
+    }
+    figcaption { text-align: center; font-size: 0.95rem; margin-top: 8px; color:#000000; }
+  </style>
+</head>
+<body>
+<header>
+  <div>Satyagraha Law Group</div>
+  <div>PDF to Markdown · SLIP · Legal Research  ·  Practitioner-Scholar</div>
+  <div class="sanskrit">आ नो भद्राः क्रतवो यन्तु विश्वतः</div>
+  <div><em>Let noble thoughts come to us from every side. — Rig Veda</em></div>
+  <div><em>The law is reason, free from passion.</em></div>
+  <div><a href="https://www.satyagraha.com">https://www.satyagraha.com</a></div>
+</header>
+<main>
+<h1>Convert Pipeline Flowchart</h1>
+<p>Happy path for PDF to Markdown. <strong>GUBERNATIO is the entry gate</strong> after SHA-256. Registry is identity only. A Mistral convert takes a 15-minute key lease (sentinel <code>SLG-pdf_to_md_file_naming_convention.text</code>). Local Tesseract does not. Split happens at Ready for Doc Link so no convert job is over 100 pages or 100 MB.</p>
+<figure>
+  <img src="Convert-Pipeline-Flowchart-v1-03-09-2026-06-48-52.png" alt="Happy-path convert flowchart. White background, black type, black borders. RAW to hash to duplicate or READY, split over 100 pages or 100 MB, merge markdown, delete parts, original to processed.">
+  <figcaption>Convert happy path. White background, black type, black borders.</figcaption>
+</figure>
+<h2>What the picture says</h2>
+<ol>
+<li>Drop the whole source PDF in <code>0_01_RAW_PDF</code>.</li>
+<li>Hash SHA-256. Filename is not identity. Append a <strong>GUBERNATIO</strong> row for this filename (Latin: governance, steering, direction, administration). <code>documents</code> stays one row per hash.</li>
+<li>If GUBERNATIO already has that hash as <code>DONE</code>, update the identity registry second and move the <strong>whole</strong> file to <code>50_90_DUPLICATES / date</code>. Unchanged. No split.</li>
+<li>If this is a Mistral convert and the same key fingerprint is already <code>RUNNING</code> (unexpired), <strong>HALT</strong>. Do not move RAW. An expired lease is free after 15 minutes.</li>
+<li>Otherwise (Mistral: take the key lease) move it to <code>10_02_READY_FOR_DOCLING / date / Stem / Stem.pdf</code>.</li>
+<li>If it is over 100 pages or 100 MB, write parts of at most those caps into <code>Stem / parts /</code>. Convert the parts. Never convert the original.</li>
+<li>Merge the part markdown into <strong>one</strong> file in <code>20_03_CLEAN_MARKDOWN</code>. Page headings continue 1..N.</li>
+<li>Delete the part PDFs.</li>
+<li>Move the original <code>Stem.pdf</code> to <code>60_90_PROCESSED / date / Stem / Stem.pdf</code>.</li>
+</ol>
+<p><strong>Drop PDF &#8594; Choose engine &#8594; Wait &#8594; Open Markdown.</strong></p>
+<div class="disclaimer">This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.</div>
+<h2>Related documents</h2>
+<ul>
+<li><a href="../README.md">Product overview</a> (wiki [[README]])</li>
+<li><a href="Mistral-Engine-Guide-v1-03-09-2026-04-39-31.md">Lawyer user guide</a> (wiki [[Mistral-Engine-Guide]])</li>
+<li><a href="Process-Workflow-Guide-v1-02-09-2026-22-55-00.md">Workflow</a> (wiki [[Process-Workflow-Guide]])</li>
+<li><a href="System-Architecture-Diagram-v1-02-09-2026-22-55-00.md">Architecture</a> (wiki [[System-Architecture-Diagram]])</li>
+<li><a href="../Lawyer-Instruction-Guide-v1-02-09-2026-23-11-40.md">Lawyer instruction guide</a></li>
+</ul>
+</main>
+<footer>
+  <div>Satyagraha Law Group · PDF to Markdown · SLIP</div>
+  <div>आ नो भद्राः क्रतवो यन्तु विश्वतः</div>
+  <div>Let noble thoughts come to us from every side. — Rig Veda</div>
+  <div>The law is reason, free from passion.</div>
+  <div class="disclaimer">This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.</div>
+  <div><a href="https://www.satyagraha.com">https://www.satyagraha.com</a></div>
+</footer>
+</body>
+</html>

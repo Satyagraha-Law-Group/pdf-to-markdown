@@ -9,9 +9,8 @@ if str(ROOT) not in sys.path:
 
 
 fastapi = pytest.importorskip("fastapi")
-from fastapi.testclient import TestClient  # noqa: E402
-
-from web.app import app  # noqa: E402
+from fastapi.testclient import TestClient
+from web.app import app
 
 
 def test_health_ok():
@@ -20,5 +19,5 @@ def test_health_ok():
     assert res.status_code == 200
     body = res.json()
     assert body["status"] == "ok"
-    assert body["product"] == "PDF to Markdown"
+    assert body["product"] == "SLIP PDF to Markdown Ingestion Tool"
     assert "SLIP" in body["family"]

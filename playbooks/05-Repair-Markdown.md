@@ -1,51 +1,39 @@
-# SKILL: Repair Markdown (mechanical only)
+# Satyagraha Law Group
 
-**Satyagraha Law Group** — PDF to Markdown  
-**Playbook:** 05-Repair-Markdown  
-**Depends on:** 03-Audit-Quality  
-**Rule:** Layer 1 is a photocopy. Do not invent table cells. Do not brief the case.
+**PDF to Markdown**  ·  SLIP  ·  Legal Research  ·  Practitioner-Scholar
 
-## Goal
+आ नो भद्राः क्रतवो यन्तु विश्वतः
 
-Apply conservative OCR repairs and document UNRECOVERED tables. Promote a `NEEDS_REVIEW` file only when a retry actually extracted text.
+*Let noble thoughts come to us from every side. — Rig Veda*
 
-## Parameters
+*The law is reason, free from passion.*
 
-| Name | Required | Default |
-| --- | --- | --- |
-| `{{SLIP_ROOT}}` | yes | |
-| `{{PYTHON}}` | no | `py -3` |
-| `{{REPAIR_CITATIONS}}` | no | `true` for this playbook |
+[https://www.satyagraha.com](https://www.satyagraha.com)
 
-## Citation map (and the ATTRIBUTE trap)
+> This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.
 
-When `--repair-citations` is on:
+---
 
-| OCR | Legal | Must not |
-| --- | --- | --- |
-| `ATR` as a whole word | `AIR` | change `ATTRIBUTE` |
-| `L]` | `LJ` | |
-| `AIL)` | `All.` | |
-| `Caleutta` | `Calcutta` | |
-| `Jnarkhand` | `Jharkhand` | |
-| `I71-B` | `171-B` | |
+Satyagraha Law Group publishes a SLIP PDF to Markdown Ingestion Tool. It does not publish a library.
 
-## Steps
+**Satyagraha Law Group**  ·  SLIP PDF to Markdown Ingestion Tool  ·  SLIP
 
-1. Read audit flags, especially `UNRECOVERED_TABLE`, `EMPTY_BODY`, `STALE_PROCESSING`.
-2. If Tesseract was missing, install it (Windows default `C:\Program Files\Tesseract-OCR\tesseract.exe`) and retry **only** hashes in `NEEDS_REVIEW` by placing the original PDF back in `0_01_RAW_PDF`. `DONE` hashes will duplicate-route, not reconvert.
-3. Re-run convert with `--repair-citations` for new or review hashes.
-4. For UNRECOVERED tables: leave the callout. You may recover a table only from visible glyphs in the PDF (re-OCR a clip). You may **not** guess a cell from context, statute knowledge, or "what a limitation table usually contains".
-5. Collapse leftover TOC leaders (`........`) if the engine missed them. Demote true running headers to `<!-- running header: … -->`.
-6. Do not fill `30_04_CASE_BRIEFS`.
+Founded by Anil B. (Lawyer), Satyagraha Law Group provides legal services for seekers looking for help by searching for Corporate Law, Civil Law, Criminal Law, Writs, High Court Lawyer, NRI Lawyer, Lawyer In Hyderabad, India.
 
-## Verification
+Need Legal Help. [Click here](https://calendly.com/anil-satyagraha/15min).
 
-- `ATTRIBUTE` still appears where it did in the source.
-- Every guessed-looking table cell is absent; callouts remain honest.
-- Front matter `processing_status` matches the tray (`DONE` in `20_03`, `NEEDS_REVIEW` in `70_99`).
+आ नो भद्राः क्रतवो यन्तु विश्वतः
 
-## Stop conditions
+*Let noble thoughts come to us from every side. — Rig Veda*
 
-- "Just make the table complete" without pixels → refuse.
-- Rewriting legal prose for style → refuse.
+*The law is reason, free from passion.*
+
+> This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.
+
+[https://www.satyagraha.com](https://www.satyagraha.com)
+
+This site is built from **real-world experience helping clients seeking Justice**, case by case — based on our work involving Legal Research, Drafting, Pleadings, Representation and beyond.
+
+Explore further: [Website](https://www.satyagraha.com) · [YouTube](https://www.youtube.com/@satyagrahalawgroup2002) · [Udemy Courses](https://www.udemy.com/user/anil-b-23/) · [LinkedIn](https://www.linkedin.com/in/anilsatyagraha/) · [Facebook](https://www.facebook.com/satyagrahalawgroup) · [Twitter / X](https://twitter.com/_satyagraha) · [WordPress](https://satyagrahalawgroup.wordpress.com/) · [Instagram](https://www.instagram.com/satyagrahalawgroup/) · [Pinterest](https://in.pinterest.com/satyagrahalawgroup/) · [Tumblr](https://www.tumblr.com/blog/satyagrahalawgroup) · [SoundCloud](https://soundcloud.com/satyagrahalawgroup) · [Podomatic](http://anil-satyagraha.podomatic.com/) · [Newsletter](https://satyagraha.substack.com/) · [WhatsApp](https://api.whatsapp.com/send?phone=917095776633)
+
+Need Legal Help? [Click Here For Next Steps](https://calendly.com/anil-satyagraha/15min)

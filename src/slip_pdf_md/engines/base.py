@@ -15,6 +15,7 @@ class ConversionResult:
     warnings: list[str] = field(default_factory=list)
     unrecovered_tables: int = 0
     needs_review: bool = False
+    usage: dict = field(default_factory=dict)
 
 
 class EngineAdapter(Protocol):

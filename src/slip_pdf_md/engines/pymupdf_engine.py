@@ -1,8 +1,13 @@
-"""PyMuPDF + Tesseract engine. Reference: legacy/convert_pdfs.py."""
+"""PyMuPDF + Tesseract engine.
+
+Commentary/judgment pages are OCR'd as prose. Markdown tables are emitted
+only when PyMuPDF finds a real grid (not TSV column-guessing on body text).
+"""
 
 from __future__ import annotations
 
 import os
+import statistics
 from pathlib import Path
 
 import fitz
@@ -19,6 +24,10 @@ UNRECOVERED = (
 )
 X_GAP_PX = 25
 Y_BUCKET = 8
+MIN_TABLE_ROWS = 3
+MIN_TABLE_COLS = 2
+MAX_MEDIAN_CELL_CHARS = 80
+OCR_PSM_PROSE = "4"
 
 
 def configure_tesseract() -> str | None:
@@ -34,17 +43,18 @@ def configure_tesseract() -> str | None:
     return str(cmd)
 
 
-def _page_image(page: fitz.Page):
+def _page_image(page: fitz.Page, scale: float = 3.0):
     from PIL import Image
 
-    pix = page.get_pixmap(matrix=fitz.Matrix(2.5, 2.5), alpha=False)
+    pix = page.get_pixmap(matrix=fitz.Matrix(scale, scale), alpha=False)
     image = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
     image = image.convert("L")
-    image = image.point(lambda x: 255 if x > 180 else 0)
+    # milder than 180: keep thin book type
+    image = image.point(lambda x: 255 if x > 165 else 0)
     return image
 
 
-def ocr_page_text(page: fitz.Page) -> str:
+def ocr_page_text(page: fitz.Page, psm: str = OCR_PSM_PROSE) -> str:
     try:
         import pytesseract
     except ImportError:
@@ -53,9 +63,18 @@ def ocr_page_text(page: fitz.Page) -> str:
     try:
         image = _page_image(page)
         text = pytesseract.image_to_string(
-            image, config="--psm 6 --oem 3 -c preserve_interword_spaces=1"
+            image,
+            config=f"--psm {psm} --oem 3 -c preserve_interword_spaces=1",
         )
-        return clean_ocr_text(text)
+        cleaned = clean_ocr_text(text)
+        if len(cleaned.split()) < 20 and psm != "3":
+            extra = pytesseract.image_to_string(
+                image, config="--psm 3 --oem 3 -c preserve_interword_spaces=1"
+            )
+            extra_c = clean_ocr_text(extra)
+            if len(extra_c.split()) > len(cleaned.split()):
+                return extra_c
+        return cleaned
     except Exception:
         return ""
 
@@ -112,7 +131,6 @@ def _ocr_layout_rows(page: fitz.Page) -> list[list[dict]]:
 
 
 def _rows_to_markdown_table(rows: list[list[dict]]) -> tuple[str, bool]:
-    """Return (markdown, unrecovered). Unrecovered means aligned columns but empty cells."""
     markdown_rows = []
     saw_aligned = False
     for row_words in rows:
@@ -138,7 +156,7 @@ def _rows_to_markdown_table(rows: list[list[dict]]) -> tuple[str, bool]:
             continue
         markdown_rows.append("| " + " | ".join(cells) + " |")
 
-    if len(markdown_rows) >= 2:
+    if len(markdown_rows) >= MIN_TABLE_ROWS:
         header = markdown_rows[0]
         col_count = max(2, header.count("|") - 1)
         separator = "| " + " | ".join(["---"] * col_count) + " |"
@@ -148,7 +166,52 @@ def _rows_to_markdown_table(rows: list[list[dict]]) -> tuple[str, bool]:
     return "", False
 
 
-def extract_table_markdown(page: fitz.Page) -> tuple[str, bool]:
+def _table_cells(table) -> list[list[str]]:
+    extract = getattr(table, "extract", None)
+    if not callable(extract):
+        return []
+    try:
+        raw = extract()
+    except Exception:
+        return []
+    rows = []
+    for row in raw or []:
+        cells = [normalize_text(str(c or "")).strip() for c in row]
+        if any(cells):
+            rows.append(cells)
+    return rows
+
+
+def is_real_grid(table) -> bool:
+    """Reject PyMuPDF false tables on commentary pages."""
+    rows = _table_cells(table)
+    if len(rows) < MIN_TABLE_ROWS:
+        return False
+    widths = [len(r) for r in rows]
+    if max(widths) < MIN_TABLE_COLS:
+        return False
+    mode = max(set(widths), key=widths.count)
+    if mode < MIN_TABLE_COLS:
+        return False
+    consistent = sum(1 for w in widths if w == mode) / len(widths)
+    if consistent < 0.6:
+        return False
+    cell_lens = [len(c) for r in rows for c in r if c]
+    if not cell_lens:
+        return False
+    try:
+        median = statistics.median(cell_lens)
+    except statistics.StatisticsError:
+        median = sum(cell_lens) / len(cell_lens)
+    if median > MAX_MEDIAN_CELL_CHARS:
+        return False
+    long_cells = sum(1 for n in cell_lens if n > 160)
+    if long_cells / len(cell_lens) > 0.3:
+        return False
+    return True
+
+
+def extract_real_tables(page: fitz.Page) -> tuple[str, bool]:
     try:
         table_finder = page.find_tables()
         tables = getattr(table_finder, "tables", []) or []
@@ -157,55 +220,51 @@ def extract_table_markdown(page: fitz.Page) -> tuple[str, bool]:
 
     markdown_tables = []
     for table in tables or []:
+        if not is_real_grid(table):
+            continue
         try:
             table_md = table.to_markdown()
         except Exception:
             continue
         cleaned = normalize_text(table_md)
-        if "|" in cleaned and cleaned.count("|") >= 4:
+        if "|" in cleaned and cleaned.count("|") >= 4 and "---" in cleaned:
             markdown_tables.append(collapse_leaders(cleaned))
 
     if markdown_tables:
         return "\n\n".join(markdown_tables), False
-
-    rows = _ocr_layout_rows(page)
-    if rows:
-        legal_table_md, unrecovered = _rows_to_markdown_table(rows)
-        if legal_table_md:
-            return legal_table_md, False
-        if unrecovered:
-            return "", True
-
     return "", False
 
 
 def extract_page(page: fitz.Page) -> tuple[str, bool]:
-    table_md, unrecovered = extract_table_markdown(page)
-    text = page.get_text("text")
-    cleaned = collapse_leaders(normalize_text(text))
+    native = collapse_leaders(normalize_text(page.get_text("text") or ""))
+    ocr = ""
+    if len(native.split()) < 25:
+        ocr = ocr_page_text(page)
+    prose = native if len(native.split()) >= len((ocr or "").split()) else ocr
 
-    if table_md:
-        if cleaned.strip() and cleaned.strip() not in table_md:
-            body = table_md + "\n\n" + cleaned
+    table_md, unrecovered = extract_real_tables(page)
+
+    if table_md and prose.strip():
+        # Keep reading order: prose first unless the page is mostly the grid
+        if len(prose.split()) > 40:
+            body = prose.strip() + "\n\n" + table_md
         else:
-            body = table_md
+            body = table_md + "\n\n" + prose.strip()
         if unrecovered:
             body = UNRECOVERED + "\n\n" + body
         return body.strip(), unrecovered
 
-    if unrecovered:
-        extra = cleaned if cleaned.strip() else ocr_page_text(page)
-        parts = [UNRECOVERED]
-        if extra.strip():
-            parts.append(extra.strip())
-        return "\n\n".join(parts), True
+    if table_md:
+        body = table_md
+        if unrecovered:
+            body = UNRECOVERED + "\n\n" + body
+        return body.strip(), unrecovered
 
-    if cleaned.strip():
-        return cleaned.strip(), False
+    if unrecovered and prose.strip():
+        return UNRECOVERED + "\n\n" + prose.strip(), True
 
-    ocr = ocr_page_text(page)
-    if ocr.strip():
-        return ocr.strip(), False
+    if prose.strip():
+        return prose.strip(), False
     return "", False
 
 
@@ -219,7 +278,9 @@ class PyMuPdfTesseractEngine:
         warnings: list[str] = []
         unrecovered_tables = 0
         try:
-            for page_number in range(len(doc)):
+            total_pages = len(doc)
+            cb = getattr(self, "on_progress", None)
+            for page_number in range(total_pages):
                 page = doc[page_number]
                 try:
                     body, unrecovered = extract_page(page)
@@ -229,6 +290,8 @@ class PyMuPdfTesseractEngine:
                 if unrecovered:
                     unrecovered_tables += 1
                 pages.append(body)
+                if cb:
+                    cb((page_number + 1) / max(total_pages, 1), f"OCR page {page_number + 1}/{total_pages}")
         finally:
             doc.close()
 

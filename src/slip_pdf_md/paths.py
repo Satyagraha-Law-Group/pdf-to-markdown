@@ -5,6 +5,8 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from slip_pdf_md.naming import resolve_generated_path
+
 SLIP_DIR_NAMES = (
     "0_01_RAW_PDF",
     "10_02_READY_FOR_DOCLING",
@@ -80,7 +82,34 @@ class SlipPaths:
 
     @property
     def registry_path(self) -> Path:
-        return self.registry_dir / "registry.sqlite"
+        """Living SHA-256 registry. Three-word name, stamp is first-created time."""
+        folder = self.registry_dir
+        folder.mkdir(parents=True, exist_ok=True)
+        live = resolve_generated_path(
+            folder,
+            "Document",
+            "Hash",
+            "Registry",
+            "sqlite",
+            legacy_names=("registry.sqlite",),
+        )
+        old_bak = folder / "registry.sqlite.bak"
+        new_bak = live.with_suffix(".bak")
+        if old_bak.is_file() and not new_bak.exists():
+            old_bak.rename(new_bak)
+        return live
+
+
+    def date_bucket(self, moment=None) -> str:
+        """Calcutta calendar day, sortable (2026-09-03)."""
+        from slip_pdf_md.naming import now_calcutta
+        moment = moment or now_calcutta()
+        return moment.strftime("%Y-%m-%d")
+
+    def bucket(self, folder, moment=None) -> Path:
+        dest = Path(folder) / self.date_bucket(moment)
+        dest.mkdir(parents=True, exist_ok=True)
+        return dest
 
     def all_dirs(self) -> list[Path]:
         return [

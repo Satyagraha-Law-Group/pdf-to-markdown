@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mistral Engine Guide — Satyagraha Law Group SLIP</title>
+  <style>
+    :root { --ink:#1b1b18; --muted:#5c5a52; --line:#d9d4c4; --paper:#f7f4ea; --card:#fffdf6; --accent:#3f5c4a; }
+    * { box-sizing: border-box; }
+    body { margin:0; font: 17px/1.55 "Iowan Old Style", "Palatino Linotype", Palatino, serif; color:var(--ink); background:var(--paper); }
+    main { max-width: 820px; margin: 0 auto; padding: 48px 28px 80px; }
+    h1 { font-size: 2rem; margin: 0 0 8px; }
+    h2 { font-size: 1.25rem; margin: 36px 0 10px; color: var(--accent); }
+    p, li { color: var(--ink); }
+    .kicker { color: var(--muted); letter-spacing: .04em; text-transform: uppercase; font-size: .78rem; margin-bottom: 10px; }
+    .lead { font-size: 1.05rem; }
+    table { width:100%; border-collapse: collapse; background: var(--card); margin: 12px 0 20px; }
+    th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; font-size: .95rem; }
+    th { background: #efe9d6; }
+    code, pre { font-family: "Cambria Mono", Consolas, "Courier New", monospace; font-size: .86rem; }
+    pre { background:#23241f; color:#f4f0e4; padding:14px 16px; overflow:auto; border-radius: 6px; }
+    .note { background: var(--card); border-left: 4px solid var(--accent); padding: 10px 14px; margin: 16px 0; }
+    .warn { border-left-color: #8a3b2a; }
+    a { color: var(--accent); }
+    footer { margin-top: 48px; color: var(--muted); font-size: .9rem; }
+  </style>
+</head>
+<body>
+<main>
+  <div class="kicker">Satyagraha Law Group · SLIP · PDF to Markdown</div>
+  <h1>Mistral Engine Guide</h1>
+  <p class="lead">Lawyer-facing guide for converting PDFs to Markdown. Default conversion stays on this computer. MistralAI OCR is optional and only runs when you ask for it.</p>
+
+  <h2>Three steps</h2>
+  <ol>
+    <li>Put PDFs in <code>0_01_RAW_PDF</code></li>
+    <li>Run convert</li>
+    <li>Open <code>20_03_CLEAN_MARKDOWN</code></li>
+  </ol>
+  <p><strong>Drop PDF → Wait → Open Markdown.</strong></p>
+
+  <h2>Two engines</h2>
+  <table>
+    <thead><tr><th>Engine</th><th>Command</th><th>Leaves the machine?</th><th>Use when</th></tr></thead>
+    <tbody>
+      <tr><td>Local Tesseract (default)</td><td><code>--engine pymupdf</code></td><td>No</td><td>Everyday scans, privileged papers</td></tr>
+      <tr><td>MistralAI OCR</td><td><code>--engine mistral</code></td><td>Yes. The PDF is uploaded</td><td>Hard scans, tables, formulas</td></tr>
+    </tbody>
+  </table>
+  <p>Mistral is the same option the <a href="https://community.obsidian.md/plugins/marker-api">Obsidian OCR-AI plugin</a> recommends.</p>
+
+  <h2>One-time setup for Mistral</h2>
+  <ol>
+    <li>Create an API key at <a href="https://console.mistral.ai/api-keys">console.mistral.ai/api-keys</a>.</li>
+    <li>Open <code>SECRETS.txt</code> in <code>Convert-PDF-TO-MARKDOWN-01</code>. Setup creates this file with a dummy value. It is gitignored.</li>
+    <li>Replace the dummy with your key:</li>
+  </ol>
+<pre>MISTRAL_API_KEY=paste-your-real-key-here</pre>
+  <p>You can also drop a timestamped <code>SECRETS-DD-MM-YYYY HH-MI-SS.txt</code> in the same folder, or a <code>setx MISTRAL_API_KEY "…"</code> line. The converter reads those shapes.</p>
+  <ol start="4">
+    <li>Confirm with doctor:</li>
+  </ol>
+<pre>slip-pdf-md doctor --vault "D:\satyagraha\VAULT\Satyagraha Law Group\SLIP_DOCUMENT_PROCESSING"</pre>
+  <p>Doctor should say <code>mistral_api_key: set (SECRETS file)</code> or <code>set (environment)</code>.</p>
+
+  <div class="note warn">
+    <strong>Never commit secrets.</strong> Real keys live only in <code>SECRETS.txt</code> or <code>SECRETS-*.txt</code>.
+    <code>.gitignore</code> blocks those names. <code>SECRETS.example</code> is the dummy template that may go to git.
+    Setup recreates a dummy <code>SECRETS.txt</code> if it is missing, and never overwrites a real file.
+  </div>
+
+  <h2>Convert a file</h2>
+  <p>Local (nothing uploaded):</p>
+<pre>slip-pdf-md convert --vault "D:\satyagraha\VAULT\Satyagraha Law Group\SLIP_DOCUMENT_PROCESSING" --input "D:\satyagraha\VAULT\Satyagraha Law Group\SLIP_DOCUMENT_PROCESSING\0_01_RAW_PDF\your.pdf" --repair-citations</pre>
+  <p>Mistral (uploads the PDF, then deletes the upload unless you opt out):</p>
+<pre>slip-pdf-md convert --vault "D:\satyagraha\VAULT\Satyagraha Law Group\SLIP_DOCUMENT_PROCESSING" --input "D:\satyagraha\VAULT\Satyagraha Law Group\SLIP_DOCUMENT_PROCESSING\0_01_RAW_PDF\your.pdf" --engine mistral --force --repair-citations</pre>
+  <p><code>--force</code> reconverts a file whose SHA-256 was already DONE. <code>--input</code> leaves the original PDF in RAW.</p>
+
+  <h2>What you get</h2>
+  <ul>
+    <li>Markdown in <code>20_03_CLEAN_MARKDOWN</code> with YAML front matter and <code>## Page N</code></li>
+    <li>Duplicates go to <code>50_90_DUPLICATES</code> unless <code>--force</code></li>
+    <li>Thin extracts go to <code>70_99_NEEDS_REVIEW</code></li>
+    <li>Run log: <code>90_00_PROJECT_TOOLING\pdf-to-markdown\logs\Conversion-Run-Log.md</code></li>
+    <li>Mistral is billed per page. <code>llm_*</code> tokens stay 0. <code>mistral_pages_processed</code> is logged</li>
+  </ul>
+
+  <h2>Privacy</h2>
+  <p>Mistral stores uploaded files for at least 24 hours. SLIP deletes the upload after conversion unless <code>SLIP_MISTRAL_DELETE_UPLOAD=0</code>. Privileged, sealed, or client-confidential papers stay on <code>--engine pymupdf</code>.</p>
+
+  <h2>Optional flags</h2>
+  <table>
+    <thead><tr><th>Variable</th><th>Default</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td><code>MISTRAL_API_KEY</code></td><td>from SECRETS</td><td>API key</td></tr>
+      <tr><td><code>SLIP_MISTRAL_INCLUDE_IMAGES</code></td><td>0</td><td>Ask Mistral for image bytes</td></tr>
+      <tr><td><code>SLIP_MISTRAL_IMAGE_LIMIT</code></td><td>0</td><td>Max images (0 = no limit)</td></tr>
+      <tr><td><code>SLIP_MISTRAL_IMAGE_MIN_SIZE</code></td><td>0</td><td>Min image edge</td></tr>
+      <tr><td><code>SLIP_MISTRAL_DELETE_UPLOAD</code></td><td>1</td><td>Delete the Mistral file after OCR</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Troubleshooting</h2>
+  <ul>
+    <li>Doctor says dummy placeholder — edit <code>SECRETS.txt</code>, save, run doctor again</li>
+    <li><code>needs MISTRAL_API_KEY</code> — no real key in env or SECRETS</li>
+    <li>HTTP 401 — revoked or mistyped key</li>
+    <li>HTTP 429 / 402 — Mistral rate or billing limit</li>
+    <li>NEEDS_REVIEW — open the note in <code>70_99_NEEDS_REVIEW</code></li>
+    <li>Same PDF, new filename — duplicate hash; use <code>--force</code></li>
+  </ul>
+
+  <footer>Satyagraha Law Group · PDF to Markdown · Mistral Engine Guide. Real keys never belong in git.</footer>
+</main>
+</body>
+</html>

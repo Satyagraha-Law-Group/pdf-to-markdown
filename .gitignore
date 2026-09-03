@@ -29,6 +29,9 @@ legal_chapters/
 # Hash registry and job databases (local state)
 *.sqlite
 *.sqlite3
+*.sqlite.bak
+*.bak
+registry.sqlite.bak
 registry.db
 web_jobs/
 
@@ -65,3 +68,32 @@ WORKSPEC_MEMORY*.md
 PDF_vs_Markdown_Discrepancy_Report.md
 PDF_Markdown_Discrepancy_Audit_PROMPT.md
 Markdown_Repair_Log.md
+
+# SECRETS — never commit real API keys (any name or timestamp)
+SECRETS
+SECRETS.txt
+SECRETS-*
+**/SECRETS
+**/SECRETS.txt
+**/SECRETS-*
+!.env.example
+!SECRETS.example
+
+# Parked local leftovers (not for GitHub)
+delete me/
+
+# Generated catalogs live under docs/; root copies are leftovers
+/Error-Code-Catalog-v*.md
+/Error-Code-Catalog-v*.html
+/Test-Suite-*.md
+/Test-Suite-*.html
+/Slip-Product-Faqs-v*.md
+/Slip-Product-Faqs-v*.html
+/Tool-Build-Practice-v*.md
+/Tool-Build-Practice-v*.html
+AGENT.md
+WORKSPACE_MEMORY_SKILL.md
+.mcp.json
+
+# Parked leftovers (underscore form on Windows)
+delete_me/

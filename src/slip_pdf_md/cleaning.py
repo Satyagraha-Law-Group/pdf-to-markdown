@@ -6,7 +6,7 @@ import re
 from collections import Counter
 
 LEADER_RE = re.compile(r"(?:[ \t]*[.\u2022\u2026]){3,}|[.]{3,}|[\u2026]{2,}|-{4,}")
-RUNNING_SKIP_RE = re.compile(r"^## Page\s+\d+", re.I)
+RUNNING_SKIP_RE = re.compile(r"^## Page\s+\d+", re.IGNORECASE)
 
 
 def normalize_text(value: str) -> str:

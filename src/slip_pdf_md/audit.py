@@ -9,9 +9,9 @@ from slip_pdf_md.naming import REPORT_NAME_RE, three_word_filename
 from slip_pdf_md.paths import SlipPaths
 from slip_pdf_md.registry import STATUS_DONE, STATUS_PROCESSING, Registry
 
-FRONT_RE = re.compile(r"^---\s*$", re.M)
-PAGE_RE = re.compile(r"^## Page\s+\d+", re.M)
-HASH_RE = re.compile(r"^source_sha256:\s*[\"']?([0-9a-fA-F]{64})", re.M)
+FRONT_RE = re.compile(r"^---\s*$", re.MULTILINE)
+PAGE_RE = re.compile(r"^## Page\s+\d+", re.MULTILINE)
+HASH_RE = re.compile(r"^source_sha256:\s*[\"']?([0-9a-fA-F]{64})", re.MULTILINE)
 
 
 def _flags_for_markdown(path: Path) -> list[str]:
@@ -23,8 +23,8 @@ def _flags_for_markdown(path: Path) -> list[str]:
         flags.append("NO_PAGE_HEADINGS")
     body = FRONT_RE.split(text, maxsplit=2)
     rest = body[-1] if body else text
-    visible = re.sub(r"<!--.*?-->", "", rest, flags=re.S).strip()
-    visible = re.sub(r"^## Page\s+\d+\s*", "", visible, flags=re.M).strip()
+    visible = re.sub(r"<!--.*?-->", "", rest, flags=re.DOTALL).strip()
+    visible = re.sub(r"^## Page\s+\d+\s*", "", visible, flags=re.MULTILINE).strip()
     if not visible or visible.startswith("_No extractable"):
         flags.append("EMPTY_BODY")
     if "UNRECOVERED TABLE REGION" in text:
@@ -82,7 +82,7 @@ def run_audit(paths: SlipPaths, registry: Registry | None = None) -> dict:
         "",
     ]
     if not flagged:
-        lines.append("No flags. Clean Markdown tray matches the photocopier contract.")
+        lines.append("No flags. Clean Markdown tray matches the ingestion contract.")
     else:
         for item in flagged:
             flag_s = ", ".join(item["flags"])

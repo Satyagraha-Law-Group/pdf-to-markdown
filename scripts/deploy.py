@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Bootstrap a Satyagraha Law Group SLIP vault for PDF to Markdown."""
+"""Satyagraha Law Group — SLIP PDF to Markdown Ingestion Tool deploy.
+
+Bootstrap a Satyagraha Law Group SLIP vault.
+Research project. Not legal advice. Not a solicitation.
+https://www.satyagraha.com
+"""
 
 from __future__ import annotations
 
 import argparse
-import os
 import shutil
 import subprocess
 import sys
@@ -15,10 +19,9 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from slip_pdf_md import FAMILY, ORG, PRODUCT_NAME  # noqa: E402
-from slip_pdf_md.naming import three_word_filename  # noqa: E402
-from slip_pdf_md.paths import TOOL_DIR, TOOLING  # noqa: E402
-from slip_pdf_md.scaffold import create_slip_tree  # noqa: E402
+from slip_pdf_md import FAMILY, ORG, PRODUCT_NAME
+from slip_pdf_md.naming import three_word_filename
+from slip_pdf_md.scaffold import create_slip_tree
 
 SKIP_COPY_NAMES = {
     ".git",
@@ -26,6 +29,7 @@ SKIP_COPY_NAMES = {
     "venv",
     "__pycache__",
     "markdown",
+    "delete me",
     "md_repair_work",
     "MASTER_MACDONE.md",
     ".pytest_cache",
@@ -93,7 +97,7 @@ def _write_lawyer_guide(paths, tool_dest: Path) -> Path:
                 "",
                 f"**Family:** {FAMILY}",
                 "",
-                "Photocopier UX. No Python required after someone has run deploy.",
+                "SLIP PDF to Markdown Ingestion Tool. No Python required after someone has run deploy.",
                 "",
                 "1. Put PDFs in `0_01_RAW_PDF`.",
                 "2. Ask whoever keeps the machine to run convert, or open the web page if it is running.",

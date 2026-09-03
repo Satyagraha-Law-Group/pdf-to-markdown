@@ -4,6 +4,7 @@ import fitz
 
 from slip_pdf_md.convert import convert_pdf
 from slip_pdf_md.registry import Registry
+from slip_pdf_md.runlog import jsonl_path, markdown_log_path
 
 
 def _text_pdf(path: Path, text: str) -> Path:
@@ -30,8 +31,8 @@ def test_convert_writes_start_end_and_token_log(slip_tree):
     assert usage["llm_total_tokens"] == 0
     assert usage["markdown_tokens_estimate"] > 0
     assert usage["equivalent_internal_vision_input_tokens"] == 1105
-    jsonl = slip_tree.registry_dir / "logs" / "runs.jsonl"
-    md = slip_tree.registry_dir / "logs" / "Conversion-Run-Log.md"
+    jsonl = jsonl_path(slip_tree)
+    md = markdown_log_path(slip_tree)
     assert jsonl.is_file()
     line = jsonl.read_text(encoding="utf-8").strip().splitlines()[-1]
     assert "started_at" in line

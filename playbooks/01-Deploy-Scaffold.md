@@ -1,54 +1,39 @@
-# SKILL: Deploy SLIP PDF-to-Markdown scaffold
+# Satyagraha Law Group
 
-**Satyagraha Law Group** — PDF to Markdown  
-**Family:** SLIP — Satyagraha Law Group Legal Intelligence Platform  
-**Playbook:** 01-Deploy-Scaffold  
-**For:** any LLM / coding agent  
-**Does not:** commit client PDFs, force-push, delete duplicates, call cloud OCR
+**PDF to Markdown**  ·  SLIP  ·  Legal Research  ·  Practitioner-Scholar
 
-## Goal
+आ नो भद्राः क्रतवो यन्तु विश्वतः
 
-Install this product into a vault so a lawyer can Drop PDF → Wait → Open Markdown.
+*Let noble thoughts come to us from every side. — Rig Veda*
 
-## Parameters
+*The law is reason, free from passion.*
 
-| Name | Required | Example |
-| --- | --- | --- |
-| `{{REPO_URL}}` | yes | `https://github.com/Satyagraha-Law-Group/pdf-to-markdown` |
-| `{{VAULT}}` | yes | `D:\satyagraha\VAULT\Satyagraha Law Group` |
-| `{{PYTHON}}` | no | `py -3` on Windows, `python3` elsewhere |
+[https://www.satyagraha.com](https://www.satyagraha.com)
 
-If `{{VAULT}}` already contains `0_01_RAW_PDF`, treat it as the SLIP root. Otherwise create `{{VAULT}}/SLIP_DOCUMENT_PROCESSING/`.
+> This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.
 
-## Steps
+---
 
-1. Clone or pull `{{REPO_URL}}`. Prefer the existing working copy at `Convert-PDF-TO-MARKDOWN-01` if it is already this product.
-2. Do **not** run `git config`. Do not force-push. Do not commit `.venv` or `*.pdf`.
-3. Run:
+Satyagraha Law Group publishes a SLIP PDF to Markdown Ingestion Tool. It does not publish a library.
 
-```text
-{{PYTHON}} scripts/deploy.py --vault "{{VAULT}}"
-```
+**Satyagraha Law Group**  ·  SLIP PDF to Markdown Ingestion Tool  ·  SLIP
 
-Windows alternative: `py -3 scripts/deploy.py --vault "{{VAULT}}"`  
-Wrappers: `scripts/deploy.ps1` and `scripts/deploy.sh`.
+Founded by Anil B. (Lawyer), Satyagraha Law Group provides legal services for seekers looking for help by searching for Corporate Law, Civil Law, Criminal Law, Writs, High Court Lawyer, NRI Lawyer, Lawyer In Hyderabad, India.
 
-4. Deploy must:
-   - create the ten SLIP folders (do not rename them)
-   - copy or keep the tool in `Convert-PDF-TO-MARKDOWN-01`
-   - put a pointer or copy **without `.venv`** under `90_00_PROJECT_TOOLING/pdf-to-markdown`
-   - `pip install -e .`
-   - write `Lawyer-Instruction-Guide-vN-DD-MM-YYYY-HH-MI-SS.md` (exactly three Title-Case words, Asia/Calcutta, 24-hour)
-5. Run `{{PYTHON}} -m slip_pdf_md doctor --vault "<SLIP root>"`.
-6. Stop. Next playbook is `02-Convert-Documents.md`.
+Need Legal Help. [Click here](https://calendly.com/anil-satyagraha/15min).
 
-## Verification
+आ नो भद्राः क्रतवो यन्तु विश्वतः
 
-- Folders exist: `0_01_RAW_PDF`, `10_02_READY_FOR_DOCLING`, `20_03_CLEAN_MARKDOWN`, `30_04_CASE_BRIEFS`, `40_05_PROJECT_BRIEFS`, `50_90_DUPLICATES`, `60_90_PROCESSED`, `70_99_NEEDS_REVIEW`, `90_00_PROJECT_TOOLING`, `Convert-PDF-TO-MARKDOWN-01`.
-- `doctor` reports PyMuPDF import OK. Tesseract may be missing; warn, do not invent OCR.
-- No client PDF was copied into git.
+*Let noble thoughts come to us from every side. — Rig Veda*
 
-## Stop conditions
+*The law is reason, free from passion.*
 
-- Path is not writable → report and stop.
-- `{{REPO_URL}}` is not the Satyagraha Law Group repo and the user did not name a fork → stop. Do not silently fork.
+> This is a research project at Satyagraha Law Group as part of its pursuit of excellence in legal research. It is not legal advice, not a solicitation, and not an offer to represent anyone.
+
+[https://www.satyagraha.com](https://www.satyagraha.com)
+
+This site is built from **real-world experience helping clients seeking Justice**, case by case — based on our work involving Legal Research, Drafting, Pleadings, Representation and beyond.
+
+Explore further: [Website](https://www.satyagraha.com) · [YouTube](https://www.youtube.com/@satyagrahalawgroup2002) · [Udemy Courses](https://www.udemy.com/user/anil-b-23/) · [LinkedIn](https://www.linkedin.com/in/anilsatyagraha/) · [Facebook](https://www.facebook.com/satyagrahalawgroup) · [Twitter / X](https://twitter.com/_satyagraha) · [WordPress](https://satyagrahalawgroup.wordpress.com/) · [Instagram](https://www.instagram.com/satyagrahalawgroup/) · [Pinterest](https://in.pinterest.com/satyagrahalawgroup/) · [Tumblr](https://www.tumblr.com/blog/satyagrahalawgroup) · [SoundCloud](https://soundcloud.com/satyagrahalawgroup) · [Podomatic](http://anil-satyagraha.podomatic.com/) · [Newsletter](https://satyagraha.substack.com/) · [WhatsApp](https://api.whatsapp.com/send?phone=917095776633)
+
+Need Legal Help? [Click Here For Next Steps](https://calendly.com/anil-satyagraha/15min)
