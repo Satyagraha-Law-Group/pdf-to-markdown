@@ -1,6 +1,7 @@
 """Gap tests so every category in the SLIP suite has a named case."""
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import fitz
@@ -11,7 +12,7 @@ from slip_pdf_md.cli import build_parser
 from slip_pdf_md.convert import convert_pdf
 from slip_pdf_md.doctor import run_doctor
 from slip_pdf_md.registry import STATUS_APPROVED, STATUS_AWAITING_APPROVAL, Registry
-from slip_pdf_md.test_report import write_product_faqs
+from slip_pdf_md.test_report import FAQS, write_product_faqs
 
 
 def _text_pdf(path: Path, text: str) -> Path:
@@ -36,18 +37,13 @@ def test_package_imports():
 def test_repository_layout_matches_product_surfaces():
     """Repository layout matches the product surfaces.
 
-    src/slip_pdf_md holds the CLI, convert pipeline, engines, registry, and support modules.
-    tests prove behavior. web holds the FastAPI app. docs and playbooks hold guides.
-    Packaging and key dependencies live in pyproject.toml.
+    Every repository path named in the repository-structure FAQ exists.
     """
     root = Path(__file__).resolve().parents[1]
-    assert (root / "src" / "slip_pdf_md").is_dir()
-    assert (root / "tests").is_dir()
-    assert (root / "web").is_dir()
-    assert (root / "docs").is_dir()
-    assert (root / "playbooks").is_dir()
-    assert (root / "scripts").is_dir()
-    assert (root / "pyproject.toml").is_file()
+    faq_map = dict(FAQS)
+    answer = faq_map["How is this repository organized?"]
+    for rel in re.findall(r"`([^`]+)`", answer):
+        assert (root / rel).exists(), rel
 
 
 @pytest.mark.integrity
