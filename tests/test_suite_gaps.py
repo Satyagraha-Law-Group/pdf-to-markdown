@@ -56,8 +56,8 @@ def test_repository_layout_matches_product_surfaces():
     deps = list(pyproject["project"]["dependencies"])
     deps += list(pyproject["project"]["optional-dependencies"]["web"])
     deps += list(pyproject["project"]["optional-dependencies"]["dev"])
-    names = {Requirement(dep).name for dep in deps}
-    for needle in ("PyMuPDF", "pytesseract", "fastapi", "pytest"):
+    names = {Requirement(dep).name.lower() for dep in deps}
+    for needle in ("pymupdf", "pytesseract", "fastapi", "pytest"):
         assert needle in names
 
 
