@@ -293,6 +293,17 @@ def _esc(text: str) -> str:
     return html.escape(str(text or ""), quote=True)
 
 
+def _html_inline(text: str) -> str:
+    parts: list[str] = []
+    last = 0
+    for match in re.finditer(r"`([^`]+)`", str(text or "")):
+        parts.append(_esc(match.string[last:match.start()]))
+        parts.append(f"<code>{_esc(match.group(1))}</code>")
+        last = match.end()
+    parts.append(_esc(str(text or "")[last:]))
+    return "".join(parts)
+
+
 def write_suite_summary(dest_dir: Path, cases: list[dict]) -> tuple[Path, Path]:
     dest_dir = Path(dest_dir)
     dest_dir.mkdir(parents=True, exist_ok=True)
@@ -429,7 +440,7 @@ def write_product_faqs(dest_dir: Path) -> tuple[Path, Path]:
     md_path.write_text(with_single_footer("\n".join(lines)), encoding="utf-8")
     parts = ["<h1>Frequently Asked Questions</h1>", "<p>Satyagraha Law Group — SLIP PDF to Markdown Ingestion Tool. Plain answers, taken from what the test suite actually proves.</p>"]
     for i, (q, a) in enumerate(FAQS, 1):
-        parts.append(f"<h2>{i}. {_esc(q)}</h2><p>{_esc(a)}</p>")
+        parts.append(f"<h2>{i}. {_html_inline(q)}</h2><p>{_html_inline(a)}</p>")
     html_path.write_text(html_wrap("Frequently Asked Questions", "".join(parts)), encoding="utf-8")
     return md_path, html_path
 

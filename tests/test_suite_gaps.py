@@ -1,6 +1,8 @@
 """Gap tests so every category in the SLIP suite has a named case."""
 from __future__ import annotations
 
+import re
+import tomllib
 from pathlib import Path
 
 import fitz
@@ -49,9 +51,13 @@ def test_repository_layout_matches_product_surfaces():
     assert (root / "docs").is_dir()
     assert (root / "playbooks").is_dir()
     assert (root / "scripts").is_dir()
-    pyproject = (root / "pyproject.toml").read_text(encoding="utf-8")
-    for needle in ("PyMuPDF>=", "pytesseract>=", "fastapi>=", "pytest>="):
-        assert needle in pyproject
+    pyproject = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))
+    deps = list(pyproject["project"]["dependencies"])
+    deps += list(pyproject["project"]["optional-dependencies"]["web"])
+    deps += list(pyproject["project"]["optional-dependencies"]["dev"])
+    names = {re.split(r"[<>=!~\\[ ]", dep, maxsplit=1)[0] for dep in deps}
+    for needle in ("PyMuPDF", "pytesseract", "fastapi", "pytest"):
+        assert needle in names
 
 
 @pytest.mark.smoke
