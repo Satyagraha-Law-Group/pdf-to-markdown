@@ -7,6 +7,7 @@ from pathlib import Path
 
 import fitz
 import pytest
+from packaging.requirements import Requirement
 
 from slip_pdf_md import PRODUCT_NAME
 from slip_pdf_md.cli import build_parser
@@ -55,7 +56,7 @@ def test_repository_layout_matches_product_surfaces():
     deps = list(pyproject["project"]["dependencies"])
     deps += list(pyproject["project"]["optional-dependencies"]["web"])
     deps += list(pyproject["project"]["optional-dependencies"]["dev"])
-    names = {re.split(r"[<>=!~\\[ ]", dep, maxsplit=1)[0] for dep in deps}
+    names = {Requirement(dep).name for dep in deps}
     for needle in ("PyMuPDF", "pytesseract", "fastapi", "pytest"):
         assert needle in names
 
