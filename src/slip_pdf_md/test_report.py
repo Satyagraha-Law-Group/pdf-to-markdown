@@ -63,6 +63,8 @@ PREFIX = {
     "performance": "PER",
 }
 
+INLINE_CODE_RE = re.compile(r"`([^`]+)`")
+
 # function_name -> (category, title, description)
 META = {
     "test_footer_is_not_duplicated_and_has_no_photocopier": ("integrity", "Footer appears once", "Documentation carries one Satyagraha footer and never uses the old product metaphor."),
@@ -293,6 +295,18 @@ def _esc(text: str) -> str:
     return html.escape(str(text or ""), quote=True)
 
 
+def _html_inline(text: str) -> str:
+    source = str(text or "")
+    parts: list[str] = []
+    last = 0
+    for match in INLINE_CODE_RE.finditer(source):
+        parts.append(_esc(match.string[last:match.start()]))
+        parts.append(f"<code>{_esc(match.group(1))}</code>")
+        last = match.end()
+    parts.append(_esc(source[last:]))
+    return "".join(parts)
+
+
 def write_suite_summary(dest_dir: Path, cases: list[dict]) -> tuple[Path, Path]:
     dest_dir = Path(dest_dir)
     dest_dir.mkdir(parents=True, exist_ok=True)
@@ -393,6 +407,7 @@ def write_suite_summary(dest_dir: Path, cases: list[dict]) -> tuple[Path, Path]:
 
 FAQS = [
     ("What does this tool do?", "It is the SLIP PDF to Markdown Ingestion Tool for legal PDFs. You put a PDF in, wait, and open a Markdown file. It does not write a case brief and it does not invent table cells."),
+    ("How is this repository organized?", "It is a Python application. `src/slip_pdf_md` holds the CLI, convert pipeline, engines, registry, and support modules. `tests` prove behavior. `web` holds the FastAPI app. `docs` and `playbooks` hold guides. `scripts` holds helper commands. Packaging and dependencies live in `pyproject.toml`."),
     ("How does the tool know two files are the same?", "It hashes the PDF bytes (SHA-256). The filename is not identity. A rename months later is still the same document."),
     ("What is GUBERNATIO?", "GUBERNATIO is Latin for governance, steering, direction, and administration. It is the master record after the hash. The identity registry stays one row per hash so several people and devices do not clog it."),
     ("When is a file finished?", "When convert succeeds, the markdown is only staged. Status is awaiting approval. A Satyagraha lawyer must approve. Only then is GUBERNATIO closed for downstream work."),
@@ -428,7 +443,7 @@ def write_product_faqs(dest_dir: Path) -> tuple[Path, Path]:
     md_path.write_text(with_single_footer("\n".join(lines)), encoding="utf-8")
     parts = ["<h1>Frequently Asked Questions</h1>", "<p>Satyagraha Law Group — SLIP PDF to Markdown Ingestion Tool. Plain answers, taken from what the test suite actually proves.</p>"]
     for i, (q, a) in enumerate(FAQS, 1):
-        parts.append(f"<h2>{i}. {_esc(q)}</h2><p>{_esc(a)}</p>")
+        parts.append(f"<h2>{i}. {_esc(q)}</h2><p>{_html_inline(a)}</p>")
     html_path.write_text(html_wrap("Frequently Asked Questions", "".join(parts)), encoding="utf-8")
     return md_path, html_path
 

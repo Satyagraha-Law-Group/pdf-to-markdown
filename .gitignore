@@ -85,6 +85,7 @@ delete me/
 # Generated catalogs live under docs/; root copies are leftovers
 /Error-Code-Catalog-v*.md
 /Error-Code-Catalog-v*.html
+/Registry-Safety-Notice-v*.txt
 /Test-Suite-*.md
 /Test-Suite-*.html
 /Slip-Product-Faqs-v*.md

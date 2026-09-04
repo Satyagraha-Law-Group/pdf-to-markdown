@@ -1,6 +1,7 @@
 """Gap tests so every category in the SLIP suite has a named case."""
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import fitz
@@ -11,6 +12,7 @@ from slip_pdf_md.cli import build_parser
 from slip_pdf_md.convert import convert_pdf
 from slip_pdf_md.doctor import run_doctor
 from slip_pdf_md.registry import STATUS_APPROVED, STATUS_AWAITING_APPROVAL, Registry
+from slip_pdf_md.test_report import FAQS, write_product_faqs
 
 
 def _text_pdf(path: Path, text: str) -> Path:
@@ -29,6 +31,31 @@ def test_package_imports():
     The product imports and names itself PDF to Markdown.
     """
     assert "PDF" in PRODUCT_NAME
+
+
+@pytest.mark.integrity
+def test_repository_layout_matches_product_surfaces():
+    """Repository layout matches the product surfaces.
+
+    Every repository path named in the repository-structure FAQ exists.
+    """
+    root = Path(__file__).resolve().parents[1]
+    faq_map = dict(FAQS)
+    answer = faq_map["How is this repository organized?"]
+    for rel in re.findall(r"`([^`]+)`", answer):
+        assert (root / rel).exists(), rel
+
+
+@pytest.mark.integrity
+def test_product_faq_html_renders_inline_code(tmp_path):
+    """FAQ HTML keeps inline code literals.
+
+    Backtick-delimited paths and filenames in FAQ answers become HTML code spans.
+    """
+    _, html = write_product_faqs(tmp_path)
+    text = html.read_text(encoding="utf-8")
+    assert "<code>src/slip_pdf_md</code>" in text
+    assert "<code>pyproject.toml</code>" in text
 
 
 @pytest.mark.smoke
