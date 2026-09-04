@@ -294,13 +294,14 @@ def _esc(text: str) -> str:
 
 
 def _html_inline(text: str) -> str:
+    source = str(text or "")
     parts: list[str] = []
     last = 0
-    for match in re.finditer(r"`([^`]+)`", str(text or "")):
+    for match in re.finditer(r"`([^`]+)`", source):
         parts.append(_esc(match.string[last:match.start()]))
         parts.append(f"<code>{_esc(match.group(1))}</code>")
         last = match.end()
-    parts.append(_esc(str(text or "")[last:]))
+    parts.append(_esc(source[last:]))
     return "".join(parts)
 
 
