@@ -393,6 +393,7 @@ def write_suite_summary(dest_dir: Path, cases: list[dict]) -> tuple[Path, Path]:
 
 FAQS = [
     ("What does this tool do?", "It is the SLIP PDF to Markdown Ingestion Tool for legal PDFs. You put a PDF in, wait, and open a Markdown file. It does not write a case brief and it does not invent table cells."),
+    ("How is this repository organized?", "It is a Python application. `src/slip_pdf_md` holds the CLI, convert pipeline, engines, registry, and support modules. `tests` proves behavior. `web` holds the FastAPI app. `docs` and `playbooks` hold guides. `scripts` holds helper commands. Packaging and dependencies live in `pyproject.toml`."),
     ("How does the tool know two files are the same?", "It hashes the PDF bytes (SHA-256). The filename is not identity. A rename months later is still the same document."),
     ("What is GUBERNATIO?", "GUBERNATIO is Latin for governance, steering, direction, and administration. It is the master record after the hash. The identity registry stays one row per hash so several people and devices do not clog it."),
     ("When is a file finished?", "When convert succeeds, the markdown is only staged. Status is awaiting approval. A Satyagraha lawyer must approve. Only then is GUBERNATIO closed for downstream work."),

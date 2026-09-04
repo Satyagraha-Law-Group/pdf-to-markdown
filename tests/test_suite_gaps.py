@@ -31,6 +31,29 @@ def test_package_imports():
     assert "PDF" in PRODUCT_NAME
 
 
+@pytest.mark.integrity
+def test_repository_layout_matches_product_surfaces():
+    """Repository layout matches the product surfaces.
+
+    src/slip_pdf_md holds the CLI, convert pipeline, engines, registry, and support modules.
+    tests proves behavior. web holds the FastAPI app. docs and playbooks hold guides.
+    Packaging and key dependencies live in pyproject.toml.
+    """
+    root = Path(__file__).resolve().parents[1]
+    assert (root / "src" / "slip_pdf_md" / "cli.py").is_file()
+    assert (root / "src" / "slip_pdf_md" / "convert.py").is_file()
+    assert (root / "src" / "slip_pdf_md" / "engines" / "pymupdf_engine.py").is_file()
+    assert (root / "src" / "slip_pdf_md" / "registry.py").is_file()
+    assert (root / "tests").is_dir()
+    assert (root / "web" / "app.py").is_file()
+    assert (root / "docs").is_dir()
+    assert (root / "playbooks").is_dir()
+    assert (root / "scripts").is_dir()
+    pyproject = (root / "pyproject.toml").read_text(encoding="utf-8")
+    for needle in ("PyMuPDF>=", "pytesseract>=", "fastapi>=", "pytest>="):
+        assert needle in pyproject
+
+
 @pytest.mark.smoke
 def test_cli_help_lists_lawyer_commands():
     """CLI help lists lawyer commands.
