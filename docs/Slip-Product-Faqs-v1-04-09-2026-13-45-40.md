@@ -25,7 +25,7 @@ It is the SLIP PDF to Markdown Ingestion Tool for legal PDFs. You put a PDF in, 
 
 ## 2. How is this repository organized?
 
-It is a Python application. `src/slip_pdf_md` holds the CLI, convert pipeline, engines, registry, and support modules. `tests` proves behavior. `web` holds the FastAPI app. `docs` and `playbooks` hold guides. `scripts` holds helper commands. Packaging and dependencies live in `pyproject.toml`.
+It is a Python application. `src/slip_pdf_md` holds the CLI, convert pipeline, engines, registry, and support modules. `tests` prove behavior. `web` holds the FastAPI app. `docs` and `playbooks` hold guides. `scripts` holds helper commands. Packaging and dependencies live in `pyproject.toml`.
 
 ## 3. How does the tool know two files are the same?
 
