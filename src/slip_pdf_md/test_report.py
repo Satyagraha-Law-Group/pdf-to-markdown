@@ -441,7 +441,7 @@ def write_product_faqs(dest_dir: Path) -> tuple[Path, Path]:
     md_path.write_text(with_single_footer("\n".join(lines)), encoding="utf-8")
     parts = ["<h1>Frequently Asked Questions</h1>", "<p>Satyagraha Law Group — SLIP PDF to Markdown Ingestion Tool. Plain answers, taken from what the test suite actually proves.</p>"]
     for i, (q, a) in enumerate(FAQS, 1):
-        parts.append(f"<h2>{i}. {_html_inline(q)}</h2><p>{_html_inline(a)}</p>")
+        parts.append(f"<h2>{i}. {_esc(q)}</h2><p>{_html_inline(a)}</p>")
     html_path.write_text(html_wrap("Frequently Asked Questions", "".join(parts)), encoding="utf-8")
     return md_path, html_path
 
