@@ -63,6 +63,8 @@ PREFIX = {
     "performance": "PER",
 }
 
+INLINE_CODE_RE = re.compile(r"`([^`]+)`")
+
 # function_name -> (category, title, description)
 META = {
     "test_footer_is_not_duplicated_and_has_no_photocopier": ("integrity", "Footer appears once", "Documentation carries one Satyagraha footer and never uses the old product metaphor."),
@@ -297,7 +299,7 @@ def _html_inline(text: str) -> str:
     source = str(text or "")
     parts: list[str] = []
     last = 0
-    for match in re.finditer(r"`([^`]+)`", source):
+    for match in INLINE_CODE_RE.finditer(source):
         parts.append(_esc(match.string[last:match.start()]))
         parts.append(f"<code>{_esc(match.group(1))}</code>")
         last = match.end()
