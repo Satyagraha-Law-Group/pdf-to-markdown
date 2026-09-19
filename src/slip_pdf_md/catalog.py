@@ -174,7 +174,7 @@ SEED_ERRORS = [
      "Confirm the scan is readable. Reconvert with the other engine if the page should have text.",
      "convert"),
     ("SLIP-E-021", "naming", "LOW",
-     "A generated artifact did not match the three-word filename convention.",
+     "A generated artifact did not match the SLG filename convention.",
      "Use Word1-Word2-Word3-vN-DD-MM-YYYY-HH-MI-SS. Do not rename pipeline folders.",
      "naming"),
     ("SLIP-E-022", "wiki", "LOW",
@@ -796,7 +796,7 @@ def write_tool_practice(dest_dir: Path) -> Path:
             "5. **Error codes before features ship.** `SLIP-E-NNN`, type, HIGH/MEDIUM/LOW, message, suggested resolution. Publish Error-Code-Catalog markdown and HTML.",
             "6. **Satyagraha header and footer** on every doc and report (Rig Veda, Aristotle, research disclaimer, site index / Calendly / channels).",
             "7. **Wiki graph.** Related files use Obsidian `[[Name]]` plus relative hrefs so HTML readers can click through.",
-            "8. **Three-word names.** `Word1-Word2-Word3-vN-DD-MM-YYYY-HH-MI-SS`. Living files keep the first-created stamp.",
+            "8. **SLG stamp names.** `SLG-Word1-Word2-Word3-v-1-0-DD-MM-YYYY-HH-MM-SS`. Living files keep the first-created stamp.",
             "9. **Never store raw API keys.** Fingerprint plus provider only. Sentinel lease for remote APIs.",
             "10. **Memory.** Update Tool-Creation-Memory (global) and Session-Learning-Notes (session) in place after each slice. Git only after Anil approves.",
             "11. **Engine choice.** Before convert (including `--force`), ask 1 Local Tesseract or 2 Mistral AI. Do not pick `--engine` yourself.",
@@ -819,7 +819,7 @@ def write_tool_practice(dest_dir: Path) -> Path:
             "<li>New features register ERROR_CODES and republish the catalog.</li>"
             "<li>Satyagraha header and footer on every document.</li>"
             "<li>Obsidian wiki links plus HTML hrefs.</li>"
-            "<li>Three-word filenames. Living stamps stay first-created.</li>"
+            "<li>SLG- stamped filenames. Living stamps stay first-created.</li>"
             "<li>Never store raw API keys.</li>"
             "<li>Update Tool-Creation-Memory and Session-Learning-Notes after each slice.</li>"
             "<li>Always ask Local Tesseract vs Mistral AI before convert.</li>"

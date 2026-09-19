@@ -98,3 +98,9 @@ WORKSPACE_MEMORY_SKILL.md
 
 # Parked leftovers (underscore form on Windows)
 delete_me/
+
+# Local secret backups (never commit)
+SECRETS.txt.bak*
+SECRETS-*.txt
+**/SECRETS.txt.bak*
+

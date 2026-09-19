@@ -24,6 +24,13 @@ from slip_pdf_md.sessionlog import format_lawyer_recap, write_session_summary
 from slip_pdf_md.verify import verify_markdown, write_report
 
 
+from slip_pdf_md.convert_mutex import (
+    ConvertBusy,
+    acquire_convert_mutex,
+    heartbeat_convert_mutex,
+    release_convert_mutex,
+)
+
 def _paths(vault: str | None) -> SlipPaths:
     return SlipPaths(discover_slip_root(vault))
 
@@ -91,6 +98,23 @@ def cmd_convert(args: argparse.Namespace) -> int:
     registry = _registry(paths)
     if getattr(registry, "restored_from_backup", False):
         print("NOTICE: Document-Hash-Registry sqlite was missing. Restored from the matching .bak.")
+    mutex = None
+    try:
+        mutex = acquire_convert_mutex(
+            None,  # convert-local lease DB; never GUBERNATIO registry
+            
+            steal_if_stale=True,
+            force_steal=bool(getattr(args, "steal_convert_lock", False)),
+        )
+        print(
+            f"convert_mutex=HELD run_id={mutex.run_id} host={mutex.host} "
+            f"agent={mutex.agent} lock={mutex.lock_file}"
+        )
+    except ConvertBusy as exc:
+        print(f"ERROR: {exc}")
+        registry.close()
+        print(footer_text())
+        return 2
     started = now_calcutta()
     try:
         if args.input:
@@ -119,8 +143,10 @@ def cmd_convert(args: argparse.Namespace) -> int:
                     audit=audit,
                 )
             )
+            heartbeat_convert_mutex(mutex)
         audit.close()
     finally:
+        release_convert_mutex(mutex)
         registry.close()
 
     if not results:
@@ -431,6 +457,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--force",
         action="store_true",
         help="Reconvert even if this SHA-256 is already DONE",
+    )
+    p_cv.add_argument(
+        "--steal-convert-lock",
+        action="store_true",
+        help="Take over a stale CONVERT.lock / CONVERT_LEASE if the holder PID is dead",
     )
     p_cv.set_defaults(func=cmd_convert)
 

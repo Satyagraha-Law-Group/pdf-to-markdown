@@ -10,3 +10,5 @@
 | Airtable optional sync | `docs/LATEST-Gubernatio-Airtable-Optional-Sync.md` | Feature contract (default OFF) |
 
 Updated: 19-09-2026-21-42-00 IST
+
+| Convert-run mutex | `docs/LATEST-Convert-Run-Mutex.md` | CONVERT.lock + **CONVERT_LEASE** |

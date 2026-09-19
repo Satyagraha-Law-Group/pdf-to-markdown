@@ -17,7 +17,7 @@ from slip_pdf_md.key_lease import (
     sentinel_path,
     uses_remote_api,
 )
-from slip_pdf_md.naming import iso_calcutta, now_calcutta
+from slip_pdf_md.naming import convert_output_filename, iso_calcutta, now_calcutta
 from slip_pdf_md.paths import DUPLICATES, READY, SlipPaths
 from slip_pdf_md.progress import emit
 from slip_pdf_md.registry import (
@@ -423,7 +423,7 @@ def _convert_pdf_impl(
     except Exception as exc:
         _log("convert_error", str(exc), sha=sha)
         note_dir = paths.bucket(paths.needs_review)
-        note = note_dir / f"{Path(inbound_name).stem}.error.md"
+        note = note_dir / convert_output_filename(inbound_name, ext="md", suffix_word="Error")
         note.write_text(
             f"# NEEDS_REVIEW\n\nConversion raised: `{exc}`\n\nSource: `{inbound_name}`\nSHA-256: `{sha}`\n",
             encoding="utf-8",
@@ -488,9 +488,12 @@ def _convert_pdf_impl(
         )
     dest_dir = paths.needs_review if status == STATUS_NEEDS_REVIEW else paths.clean
     dest_dir.mkdir(parents=True, exist_ok=True)
-    dest = dest_dir / f"{Path(inbound_name).stem}.md"
+    dest = dest_dir / convert_output_filename(inbound_name, ext="md")
     if dest.exists() and not force:
-        dest = dest_dir / f"{Path(inbound_name).stem}-{sha[:12]}.md"
+        # rare collision: bump subversion in the stamp name via sha-tagged word set
+        dest = dest_dir / convert_output_filename(
+            inbound_name, ext="md", subversion=int(sha[:4], 16) % 100
+        )
     engine_usage = getattr(result, "usage", None) or {}
     token_usage = build_token_usage(
         markdown_text=markdown,
@@ -512,7 +515,7 @@ def _convert_pdf_impl(
     )
     dest.write_text(markdown, encoding="utf-8")
     if not fidelity["passed"]:
-        note = paths.needs_review / f"{Path(inbound_name).stem}.fidelity.md"
+        note = paths.needs_review / convert_output_filename(inbound_name, ext="md", suffix_word="Fidelity")
         note.write_text(
             "# NEEDS_REVIEW — fidelity gate\n\n"
             f"overall_recall: {fidelity['overall_recall']}\n"

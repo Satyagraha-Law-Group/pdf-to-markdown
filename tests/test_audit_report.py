@@ -1,5 +1,5 @@
 from slip_pdf_md.audit import run_audit
-from slip_pdf_md.naming import REPORT_NAME_RE
+from slip_pdf_md.naming import SLG_NAME_RE, SLG_NAME_RE
 from slip_pdf_md.registry import Registry
 
 
@@ -18,7 +18,7 @@ def test_audit_writes_three_word_named_report(slip_tree):
     reg.close()
     report = result["report"]
     assert report.exists()
-    assert REPORT_NAME_RE.match(report.name), report.name
+    assert SLG_NAME_RE.match(report.name), report.name
     assert report.name.startswith("Audit-Quality-Report-v1-")
     body = report.read_text(encoding="utf-8")
     assert "Satyagraha Law Group" in body

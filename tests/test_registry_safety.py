@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from slip_pdf_md.naming import REPORT_NAME_RE
+from slip_pdf_md.naming import SLG_NAME_RE, SLG_NAME_RE
 from slip_pdf_md.paths import SlipPaths
 from slip_pdf_md.registry import (
     STATUS_DONE,
@@ -31,7 +31,7 @@ def test_backup_created_and_restores_after_delete(tmp_path: Path):
     assert bak.exists()
     notices = list(db.parent.glob("Registry-Safety-Notice-v*.txt"))
     assert notices
-    assert REPORT_NAME_RE.match(notices[0].name)
+    assert SLG_NAME_RE.match(notices[0].name)
     reg.close()
     db.unlink()
     assert not db.exists()

@@ -4,7 +4,7 @@ import fitz
 
 from slip_pdf_md.auditcontrol import SessionAudit, collect_sequential_pdfs
 from slip_pdf_md.convert import convert_pdf
-from slip_pdf_md.naming import REPORT_NAME_RE
+from slip_pdf_md.naming import SLG_NAME_RE, SLG_NAME_RE
 from slip_pdf_md.registry import Registry
 
 
@@ -33,7 +33,7 @@ def test_new_file_moves_raw_to_ready_then_processed(slip_tree):
     assert processed[0].parent.parent.name.count("-") == 2  # YYYY-MM-DD
     assert list(slip_tree.ready.rglob("*.pdf")) == []
     text = audit.path.read_text(encoding="utf-8")
-    assert REPORT_NAME_RE.match(audit.path.name)
+    assert SLG_NAME_RE.match(audit.path.name)
     assert "moved_to_ready" in text
     assert "moved_to_processed" in text
     assert "hashed" in text
